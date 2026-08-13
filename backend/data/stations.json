@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ST-01",
+    "name": "Ajaokuta Terminal Gas Station (TGS)",
+    "coordinates": [
+      6.6552,
+      7.5564
+    ],
+    "type": "Main Terminal & Injection Hub",
+    "capacity_mmscfd": 2200
+  },
+  {
+    "id": "ST-02",
+    "name": "Geregu Power & Gas Metering Station",
+    "coordinates": [
+      6.6603,
+      7.4716
+    ],
+    "type": "Power Plant Metering Station",
+    "capacity_mmscfd": 450
+  },
+  {
+    "id": "ST-03",
+    "name": "Obajana Industrial Metering Station",
+    "coordinates": [
+      6.435,
+      7.915
+    ],
+    "type": "Industrial Metering Station",
+    "capacity_mmscfd": 350
+  },
+  {
+    "id": "ST-04",
+    "name": "Ahoko Block Valve Station (AKK KP 45)",
+    "coordinates": [
+      6.835,
+      8.12
+    ],
+    "type": "Block Valve Station",
+    "capacity_mmscfd": 2200
+  },
+  {
+    "id": "ST-05",
+    "name": "Oben Gas Processing Plant (Origin)",
+    "coordinates": [
+      6.02,
+      6.15
+    ],
+    "type": "Gas Production Node",
+    "capacity_mmscfd": 1500
+  }
+]

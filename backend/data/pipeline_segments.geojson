@@ -1,0 +1,2405 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 1,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.02,
+            0.5039733866159012
+          ],
+          [
+            0.04,
+            0.5236962512471597
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 2,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.04,
+            0.507788366846173
+          ],
+          [
+            0.06,
+            0.5266875057724678
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 3,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.06,
+            0.5112928494679007
+          ],
+          [
+            0.08,
+            0.5288445007057081
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 4,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.08,
+            0.5143471218179905
+          ],
+          [
+            0.1,
+            0.5300648670335294
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 5,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.1,
+            0.5168294196961579
+          ],
+          [
+            0.12000000000000001,
+            0.5302776645778191
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 6,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.12,
+            0.5186407817193446
+          ],
+          [
+            0.13999999999999999,
+            0.5294468278367074
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 7,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.14,
+            0.5197089945997692
+          ],
+          [
+            0.16,
+            0.5275733681952963
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 8,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.16,
+            0.5199914720608301
+          ],
+          [
+            0.18,
+            0.5246962235268898
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 9,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.18,
+            0.5194769526175639
+          ],
+          [
+            0.19999999999999998,
+            0.520891696650918
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 10,
+        "label": "High"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.2,
+            0.5181859485365137
+          ],
+          [
+            0.22,
+            0.5162714775762262
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 11,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.22,
+            0.5161699280763918
+          ],
+          [
+            0.24,
+            0.5109792988840152
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 12,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.24,
+            0.513509263611023
+          ],
+          [
+            0.26,
+            0.5051863268800801
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 13,
+        "label": "High"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.26,
+            0.5103100274364293
+          ],
+          [
+            0.28,
+            0.49908544118091447
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 14,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.28,
+            0.5066997630031181
+          ],
+          [
+            0.30000000000000004,
+            0.49288460020812064
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 15,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.3,
+            0.5028224001611974
+          ],
+          [
+            0.32,
+            0.4867995278502587
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 16,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.32,
+            0.4988325171314484
+          ],
+          [
+            0.34,
+            0.48104598576718754
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 17,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.34,
+            0.49488917795946336
+          ],
+          [
+            0.36000000000000004,
+            0.475831915234707
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 18,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.36,
+            0.49114959113410295
+          ],
+          [
+            0.38,
+            0.47134974120209405
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 19,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.38,
+            0.48776284218114563
+          ],
+          [
+            0.4,
+            0.4677691289130775
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 20,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.4,
+            0.4848639500938414
+          ],
+          [
+            0.42000000000000004,
+            0.46523046999961987
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 21,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.42,
+            0.48256848455172824
+          ],
+          [
+            0.44,
+            0.4638393508059123
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 22,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.44,
+            0.4809679585222097
+          ],
+          [
+            0.46,
+            0.463662221663485
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 23,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.46,
+            0.4801261799273307
+          ],
+          [
+            0.48000000000000004,
+            0.46472344313226577
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 24,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.48,
+            0.4800767078232832
+          ],
+          [
+            0.5,
+            0.467003835406011
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 25,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.5,
+            0.4808215145067372
+          ],
+          [
+            0.52,
+            0.47044080199904476
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 26,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.52,
+            0.48233090688559693
+          ],
+          [
+            0.54,
+            0.4749300405463462
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 27,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.54,
+            0.48454471024888024
+          ],
+          [
+            0.56,
+            0.48032879426026465
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 28,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.56,
+            0.48737466724255357
+          ],
+          [
+            0.5800000000000001,
+            0.48646053954778196
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 29,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.58,
+            0.4907079564117249
+          ],
+          [
+            0.6,
+            0.493120950722374
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 30,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.6,
+            0.4944116900360215
+          ],
+          [
+            0.62,
+            0.500084933745286
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 31,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.62,
+            0.4983382119436501
+          ],
+          [
+            0.64,
+            0.5071144794027973
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 32,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.64,
+            0.5023309840970098
+          ],
+          [
+            0.66,
+            0.5139670538941933
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 33,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.66,
+            0.5062308272702676
+          ],
+          [
+            0.68,
+            0.5204042227560928
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 34,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.68,
+            0.5098822670227722
+          ],
+          [
+            0.7000000000000001,
+            0.5262001932788108
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 35,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.7000000000000001,
+            0.5131397319743758
+          ],
+          [
+            0.7200000000000001,
+            0.5311499615496215
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 36,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.72,
+            0.515873357276983
+          ],
+          [
+            0.74,
+            0.5350767630099903
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 37,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.74,
+            0.5179741619162326
+          ],
+          [
+            0.76,
+            0.5378385495141106
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 38,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.76,
+            0.5193583934406297
+          ],
+          [
+            0.78,
+            0.5393332504652021
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 39,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.78,
+            0.5199708669074921
+          ],
+          [
+            0.8,
+            0.5395026194220526
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 40,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.8,
+            0.5197871649324677
+          ],
+          [
+            0.8200000000000001,
+            0.5383345189934872
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 41,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.8200000000000001,
+            0.5188146111335955
+          ],
+          [
+            0.8400000000000001,
+            0.5358635539603861
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 42,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.84,
+            0.5170919781617657
+          ],
+          [
+            0.86,
+            0.5321700232486317
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 43,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.86,
+            0.5146879419574822
+          ],
+          [
+            0.88,
+            0.5273772233459189
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 44,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.88,
+            0.5116983438578352
+          ],
+          [
+            0.9,
+            0.5216471966801776
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 45,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.9,
+            0.5082423697048352
+          ],
+          [
+            0.92,
+            0.5151750760615357
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 46,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.92,
+            0.504457798282005
+          ],
+          [
+            0.9400000000000001,
+            0.5081822283598096
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 47,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.9400000000000001,
+            0.5004955085090672
+          ],
+          [
+            0.9600000000000001,
+            0.5009084451776795
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 48,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.96,
+            0.4965134643755404
+          ],
+          [
+            0.98,
+            0.49360346369936814
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 49,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.98,
+            0.4926704174149614
+          ],
+          [
+            1.0,
+            0.4865181258050475
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 50,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.0,
+            0.4891195777822126
+          ],
+          [
+            1.02,
+            0.4798954969989488
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 51,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.02,
+            0.48600250624812913
+          ],
+          [
+            1.04,
+            0.47396226819443266
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 52,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.04,
+            0.4834434706182869
+          ],
+          [
+            1.06,
+            0.4689207528754324
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 53,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.06,
+            0.48154449156774387
+          ],
+          [
+            1.08,
+            0.4649417700094108
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 54,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.08,
+            0.48038127539867015
+          ],
+          [
+            1.1,
+            0.4621586701609766
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 55,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.1,
+            0.4800001958689859
+          ],
+          [
+            1.12,
+            0.4606627197941298
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 56,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.12,
+            0.48041644541697365
+          ],
+          [
+            1.1400000000000001,
+            0.46050000836120847
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 57,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.1400000000000001,
+            0.4816134294867065
+          ],
+          [
+            1.1600000000000001,
+            0.4616699863627789
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 58,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.16,
+            0.48354342810062584
+          ],
+          [
+            1.18,
+            0.4641256822549483
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 59,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.18,
+            0.48612949830445756
+          ],
+          [
+            1.2,
+            0.46777558415253717
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 60,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.2,
+            0.4892685416399913
+          ],
+          [
+            1.22,
+            0.47248711105846225
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 61,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.22,
+            0.4928354143552634
+          ],
+          [
+            1.24,
+            0.4780915401393479
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 62,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.24,
+            0.49668791649103383
+          ],
+          [
+            1.26,
+            0.48439020354248247
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 63,
+        "label": "High"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.26,
+            0.5006724609444227
+          ],
+          [
+            1.28,
+            0.4911617223845029
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 64,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.28,
+            0.5046301965020308
+          ],
+          [
+            1.3,
+            0.4981700085345232
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 65,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.3,
+            0.5084033407365328
+          ],
+          [
+            1.32,
+            0.505172738018889
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 66,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.32,
+            0.5118414702941445
+          ],
+          [
+            1.34,
+            0.5119299842539056
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 67,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.34,
+            0.514807517799049
+          ],
+          [
+            1.36,
+            0.5182126954013272
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 68,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.36,
+            0.5171832362971299
+          ],
+          [
+            1.3800000000000001,
+            0.5238107080268815
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 69,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.3800000000000001,
+            0.5188739133888821
+          ],
+          [
+            1.4000000000000001,
+            0.5285400085639422
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 70,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.4000000000000001,
+            0.5198121471138974
+          ],
+          [
+            1.4200000000000002,
+            0.5322489840492031
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 71,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.42,
+            0.5199605330543272
+          ],
+          [
+            1.44,
+            0.5348234430108739
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 72,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.44,
+            0.5193131555309856
+          ],
+          [
+            1.46,
+            0.5361902347056354
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 73,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.46,
+            0.51789582344281
+          ],
+          [
+            1.48,
+            0.5363193482795284
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 74,
+        "label": "High"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.48,
+            0.5157650413475063
+          ],
+          [
+            1.5,
+            0.535224430811379
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 75,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.5,
+            0.5130057568031423
+          ],
+          [
+            1.52,
+            0.5329617223867139
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 76,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.52,
+            0.509727973777076
+          ],
+          [
+            1.54,
+            0.5296274650922869
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 77,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.54,
+            0.506062367134914
+          ],
+          [
+            1.56,
+            0.5253538988954233
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 78,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.56,
+            0.5021550730459888
+          ],
+          [
+            1.58,
+            0.5203040086749927
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 79,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.58,
+            0.49816186299544635
+          ],
+          [
+            1.6,
+            0.5146652312961639
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 80,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.6,
+            0.4942419336666987
+          ],
+          [
+            1.62,
+            0.5086423679331804
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 81,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.62,
+            0.4905515602720307
+          ],
+          [
+            1.6400000000000001,
+            0.5024499735382285
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 82,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.6400000000000001,
+            0.48723786635304106
+          ],
+          [
+            1.6600000000000001,
+            0.49630451150415844
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 83,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.6600000000000001,
+            0.48443295842931405
+          ],
+          [
+            1.6800000000000002,
+            0.4904165666606306
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 84,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.68,
+            0.4822486593283699
+          ],
+          [
+            1.7,
+            0.48498340369252657
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 85,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.7,
+            0.48077205016240887
+          ],
+          [
+            1.72,
+            0.48018214122062824
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 86,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.72,
+            0.4800619986791681
+          ],
+          [
+            1.74,
+            0.4761637848946606
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 87,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.74,
+            0.4801468123905873
+          ],
+          [
+            1.76,
+            0.4730483270548132
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 88,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.76,
+            0.4810231100416375
+          ],
+          [
+            1.78,
+            0.4709210772897004
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 89,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.78,
+            0.48265595641028836
+          ],
+          [
+            1.8,
+            0.4698303392993629
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 90,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.8,
+            0.4849802550645665
+          ],
+          [
+            1.82,
+            0.46978649680739004
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 91,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.82,
+            0.4879033435518743
+          ],
+          [
+            1.84,
+            0.4707625169281641
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 92,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.84,
+            0.49130868755856205
+          ],
+          [
+            1.86,
+            0.4726958254990076
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 93,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.86,
+            0.4950605267652676
+          ],
+          [
+            1.8800000000000001,
+            0.4754914575088899
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 94,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.8800000000000001,
+            0.49900928718243265
+          ],
+          [
+            1.9000000000000001,
+            0.4790263388516611
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 95,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.9000000000000001,
+            0.502997544193259
+          ],
+          [
+            1.9200000000000002,
+            0.4831545149635127
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 96,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.92,
+            0.5068662985763979
+          ],
+          [
+            1.94,
+            0.4877131089699302
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 97,
+        "label": "High"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.94,
+            0.510461315303154
+          ],
+          [
+            1.96,
+            0.49252876794638134
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 98,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.96,
+            0.5136392724013628
+          ],
+          [
+            1.98,
+            0.4974243416067045
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 99,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            1.98,
+            0.5162734747501421
+          ],
+          [
+            2.0,
+            0.5022255336000878
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 100,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.0,
+            0.5182589050145525
+          ],
+          [
+            2.02,
+            0.5067672716441701
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 101,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.02,
+            0.5195164103553395
+          ],
+          [
+            2.04,
+            0.5108995585697832
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 102,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.04,
+            0.5199958580028534
+          ],
+          [
+            2.06,
+            0.5144925912418215
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 103,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.06,
+            0.5196781338923723
+          ],
+          [
+            2.08,
+            0.5174409671421748
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 104,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.08,
+            0.5185759046815448
+          ],
+          [
+            2.1,
+            0.5196668377454069
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 105,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.1,
+            0.5167331127707211
+          ],
+          [
+            2.12,
+            0.5211219120349503
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 106,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.12,
+            0.5142232244581196
+          ],
+          [
+            2.14,
+            0.5217882607724734
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 107,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.14,
+            0.5111463010703532
+          ],
+          [
+            2.16,
+            0.5216779205219795
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 108,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.16,
+            0.5076250098330988
+          ],
+          [
+            2.18,
+            0.5208313439979804
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 109,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.18,
+            0.5037997335159088
+          ],
+          [
+            2.2,
+            0.5193147881651949
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 110,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.2,
+            0.49982297381419194
+          ],
+          [
+            2.22,
+            0.5172167719087551
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 111,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.22,
+            0.49585327158786485
+          ],
+          [
+            2.24,
+            0.51464376946283
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 112,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.24,
+            0.4920488863375713
+          ],
+          [
+            2.2600000000000002,
+            0.5117153328371968
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 113,
+        "label": "High"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.2600000000000002,
+            0.4885614868978087
+          ],
+          [
+            2.2800000000000002,
+            0.5085588552318437
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 114,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.2800000000000002,
+            0.4855301048791151
+          ],
+          [
+            2.3000000000000003,
+            0.5053041972428485
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 115,
+        "label": "Low"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.3000000000000003,
+            0.48307559191649657
+          ],
+          [
+            2.3200000000000003,
+            0.5020783982720531
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 116,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.32,
+            0.4812958016961092
+          ],
+          [
+            2.34,
+            0.4990006870688418
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 117,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.34,
+            0.480261688837587
+          ],
+          [
+            2.36,
+            0.4961779882338659
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 118,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.36,
+            0.48001448015726744
+          ],
+          [
+            2.38,
+            0.4937010966268738
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 119,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.38,
+            0.48056403108512274
+          ],
+          [
+            2.4,
+            0.4916416600778438
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "segment_id": 120,
+        "label": "Medium"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            2.4,
+            0.48188843275986754
+          ],
+          [
+            2.42,
+            0.49005007399613537
+          ]
+        ]
+      }
+    }
+  ]
+}

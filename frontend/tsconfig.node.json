@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ESNext"],
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true
+  },
+  "references": []
+}
