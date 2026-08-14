@@ -11,3 +11,8 @@ node_modules/
 
 # IDE
 .vscode/
+
+# Environment files
+.env
+.env.*
+!.env.example
