@@ -49,6 +49,28 @@ This repository contains a demonstrator full-stack application for environmental
 - The backend exposes a GeoJSON-style locations API and a model prediction endpoint.
 - The frontend fetches environmental location data and renders an interactive risk map.
 
+## Production Operations
+
+- `GET /health` reports whether the API process and trained models are ready. Render uses this endpoint for service health checks.
+- For production, set `CORS_ALLOW_ORIGINS` on Render to the exact frontend origin (for example, `https://your-project.vercel.app`). Multiple origins can be comma-separated.
+- The backend loads the trained prediction models once when the service starts, so prediction requests do not reload them from disk.
+
+### Verification
+
+Run the backend API tests from `backend/`:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+Build the frontend from `frontend/`:
+
+```bash
+npm run build
+```
+
+GitHub Actions runs both checks on pushes and pull requests.
+
 ## Notes
 
 - This implementation uses synthetic sample data to demonstrate the workflow.

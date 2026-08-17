@@ -3,8 +3,9 @@ from pydantic import BaseModel
 import joblib
 import json
 import csv
+from functools import lru_cache
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Optional
 
 router = APIRouter()
 
@@ -15,6 +16,19 @@ PIPELINES_PATH = DATA_DIR / "pipeline_routes.geojson"
 STATIONS_PATH = DATA_DIR / "stations.json"
 KP_FEATURES_PATH = DATA_DIR / "kp_features.json"
 FEATURES_CSV_PATH = DATA_DIR / "location_features.csv"
+
+
+@lru_cache(maxsize=1)
+def load_prediction_models() -> tuple[Any, Any]:
+    """Load the trained models once per application process."""
+    if not REGRESSOR_PATH.exists() or not MODEL_PATH.exists():
+        raise FileNotFoundError("Trained model files not found")
+
+    return joblib.load(REGRESSOR_PATH), joblib.load(MODEL_PATH)
+
+
+def prediction_models_loaded() -> bool:
+    return load_prediction_models.cache_info().currsize > 0
 
 
 class KPPredictRequest(BaseModel):
@@ -92,11 +106,10 @@ async def get_location_features():
 @router.post("/predict-kp", response_model=KPPredictResponse)
 async def predict_kp(payload: KPPredictRequest):
     """Predict dynamic Failure Probability and Failure Cause using 6 Quantitative Determinants."""
-    if not REGRESSOR_PATH.exists() or not MODEL_PATH.exists():
+    try:
+        regressor, classifier = load_prediction_models()
+    except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Trained model files not found")
-
-    regressor = joblib.load(REGRESSOR_PATH)
-    classifier = joblib.load(MODEL_PATH)
 
     X = [[
         payload.flooding_index,
