@@ -1,4 +1,5 @@
 export type RiskLevel = 'Low' | 'Medium' | 'High' | 'Critical';
+export type DegradationCondition = 'Normal' | 'Moderate' | 'Critical';
 
 export interface MeteringStation {
   id: string;
@@ -35,6 +36,14 @@ export interface KPFeature {
   operating_pressure_psig: number;
   pipe_material: string;
   design_wall_thickness_mm: number;
+
+  // Wall Thickness & Corrosion Degradation
+  operational_age_years?: number;
+  corrosion_rate_mm_per_year?: number;
+  thickness_loss_mm?: number;
+  remaining_wall_thickness_mm?: number;
+  material_loss_percent?: number;
+  degradation_condition?: DegradationCondition;
 
   // Failure Diagnostics Output
   failure_probability: number;

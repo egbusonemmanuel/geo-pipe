@@ -19,6 +19,7 @@ PREDICTION_PAYLOAD = {
     "operating_pressure_psig": 1440.0,
     "pipe_diameter_inches": 40.0,
     "design_wall_thickness_mm": 22.2,
+    "operational_age_years": 8.0,
 }
 
 
@@ -51,8 +52,13 @@ class ApiTests(unittest.TestCase):
         self.assertGreater(len(stations.json()), 0)
         self.assertEqual(features.status_code, 200)
         self.assertTrue(all(feature["pipeline_id"] == 1 for feature in features.json()))
+        # Verify degradation fields in KP features
+        first_kp = features.json()[0]
+        self.assertIn("thickness_loss_mm", first_kp)
+        self.assertIn("remaining_wall_thickness_mm", first_kp)
+        self.assertIn("degradation_condition", first_kp)
 
-    def test_prediction_returns_a_valid_risk_assessment(self):
+    def test_prediction_returns_a_valid_risk_and_degradation_assessment(self):
         response = self.client.post("/api/predict-kp", json=PREDICTION_PAYLOAD)
 
         self.assertEqual(response.status_code, 200)
@@ -61,6 +67,11 @@ class ApiTests(unittest.TestCase):
         self.assertGreaterEqual(body["failure_probability"], 0.01)
         self.assertLessEqual(body["failure_probability"], 0.99)
         self.assertTrue(body["primary_hazard"])
+        # Verify degradation response
+        self.assertIn(body["degradation_condition"], {"Normal", "Moderate", "Critical"})
+        self.assertGreater(body["thickness_loss_mm"], 0.0)
+        self.assertGreater(body["remaining_wall_thickness_mm"], 0.0)
+        self.assertLessEqual(body["remaining_wall_thickness_mm"], PREDICTION_PAYLOAD["design_wall_thickness_mm"])
 
     def test_prediction_rejects_an_incomplete_payload(self):
         response = self.client.post("/api/predict-kp", json={"flooding_index": 0.5})

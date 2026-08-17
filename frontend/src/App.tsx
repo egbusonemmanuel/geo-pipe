@@ -545,6 +545,40 @@ function App() {
               </div>
             </div>
 
+            {/* Wall Thickness & Corrosion Degradation Section */}
+            {selectedKP.remaining_wall_thickness_mm !== undefined && (
+              <div className="degradation-section">
+                <div className="degradation-header">
+                  <span className="det-name" style={{ fontWeight: 700 }}>🛡️ Wall Thickness & Degradation</span>
+                  <span className={`deg-condition-badge ${(selectedKP.degradation_condition || 'Normal').toLowerCase()}`}>
+                    {selectedKP.degradation_condition || 'Normal'} Condition
+                  </span>
+                </div>
+                <div className="deg-grid">
+                  <div className="deg-stat">
+                    <span className="deg-stat-label">Remaining Wall</span>
+                    <span className="deg-stat-val">
+                      {selectedKP.remaining_wall_thickness_mm} mm
+                      <span className="deg-stat-sub"> / {selectedKP.design_wall_thickness_mm} mm</span>
+                    </span>
+                  </div>
+                  <div className="deg-stat">
+                    <span className="deg-stat-label">Wall Thinning Loss</span>
+                    <span className="deg-stat-val loss">
+                      -{selectedKP.thickness_loss_mm} mm
+                      <span className="deg-stat-sub"> ({selectedKP.material_loss_percent}% loss)</span>
+                    </span>
+                  </div>
+                </div>
+                <div className="pof-bar-bg" style={{ marginTop: '8px' }}>
+                  <div
+                    className={`pof-bar-fill ${(selectedKP.degradation_condition || 'Normal').toLowerCase()}`}
+                    style={{ width: `${Math.min(100, selectedKP.material_loss_percent || 0)}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Geo-Hazard Diagnostic Failure Cause */}
             <div className="hazard-box">
               <div className="hazard-title">
@@ -796,6 +830,9 @@ function App() {
                         <p><strong>PoF:</strong> {kp.failure_probability_percent}%</p>
                         <p><strong>Primary Cause:</strong> {kp.primary_hazard}</p>
                         <p><strong>Flood Index:</strong> {(kp.flooding_index ?? 0).toFixed(2)} | <strong>Seismic Factor:</strong> {(kp.earthquake_factor ?? 0).toFixed(2)}</p>
+                        {kp.remaining_wall_thickness_mm !== undefined && (
+                          <p><strong>Wall Thickness:</strong> {kp.remaining_wall_thickness_mm}mm ({kp.degradation_condition || 'Normal'})</p>
+                        )}
                       </div>
                     </div>
                   </Popup>

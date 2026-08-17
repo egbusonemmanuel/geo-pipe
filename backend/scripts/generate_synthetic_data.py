@@ -84,6 +84,12 @@ PIPELINE_ROUTES = [
         "operating_pressure_psig": 1440.0,
         "pipe_material": "API 5L X80",
         "design_wall_thickness_mm": 22.2,
+        "construction_start_date": "2020-06-30",
+        "construction_age_years": 6.0,
+        "operational_start_date": "2022-08-15",
+        "operational_age_years": 4.0,
+        "operational_status": "Active Commissioning",
+        "commissioning_note": "Flagged off by President Muhammadu Buhari on June 30, 2020; Section 1 runs from Ajaokuta TGS traversing Kogi into FCT Abuja corridor.",
         "waypoints": [
             (7.5564, 6.6552),  # Ajaokuta TGS (KP 0.0)
             (7.5850, 6.6800),  # River Niger crossing south (KP 4.2)
@@ -106,6 +112,12 @@ PIPELINE_ROUTES = [
         "operating_pressure_psig": 1000.0,
         "pipe_material": "API 5L X65",
         "design_wall_thickness_mm": 14.3,
+        "construction_start_date": "2012-04-15",
+        "construction_age_years": 14.0,
+        "operational_start_date": "2014-02-10",
+        "operational_age_years": 12.0,
+        "operational_status": "Continuous Operational Supply",
+        "commissioning_note": "Dedicated feeder spur dedicated to Geregu I and II thermal power generation turbines along the Ajaokuta industrial axis.",
         "waypoints": [
             (7.5564, 6.6552),  # Ajaokuta TGS (KP 0.0)
             (7.5200, 6.6580),  # Ajaokuta Industrial Zone (KP 4.2)
@@ -123,6 +135,12 @@ PIPELINE_ROUTES = [
         "operating_pressure_psig": 850.0,
         "pipe_material": "API 5L X52",
         "design_wall_thickness_mm": 11.9,
+        "construction_start_date": "2014-08-20",
+        "construction_age_years": 12.0,
+        "operational_start_date": "2016-05-18",
+        "operational_age_years": 10.0,
+        "operational_status": "High Capacity Industrial Supply",
+        "commissioning_note": "Supplies natural gas feed for cement kiln pyroprocessing and captive power generation at the Obajana industrial plant.",
         "waypoints": [
             (7.5564, 6.6552),  # Ajaokuta TGS (KP 0.0)
             (7.5200, 6.5500),  # Okene-Ajaokuta Road Corridor (KP 12.0)
@@ -142,6 +160,12 @@ PIPELINE_ROUTES = [
         "operating_pressure_psig": 1200.0,
         "pipe_material": "API 5L X65",
         "design_wall_thickness_mm": 15.9,
+        "construction_start_date": "2008-01-10",
+        "construction_age_years": 18.0,
+        "operational_start_date": "2010-11-25",
+        "operational_age_years": 16.0,
+        "operational_status": "Strategic Gas Trunkline Feed",
+        "commissioning_note": "Western regional backbone delivering treated gas from Oben Gas Plant (Edo State) into Ajaokuta Gas Hub.",
         "waypoints": [
             (6.1500, 6.0200),  # Oben Gas Plant (KP 0.0)
             (6.4500, 6.1800),  # Edo-Kogi Border Forest (KP 40.0)
@@ -428,6 +452,26 @@ def calculate_quantitative_determinants(kp_list, route_info, elevations):
             )
             remediation = "Maintain standard periodic aerial Right-of-Way surveillance and annual CP survey."
 
+        # -------------------------------------------------------------------
+        # CORROSION & WALL-THICKNESS DEGRADATION MODEL (Kaggle Dataset Alignment)
+        # -------------------------------------------------------------------
+        op_age = route_info.get("operational_age_years", 10.0)
+        design_t = route_info["design_wall_thickness_mm"]
+        
+        # Annual corrosion penetration rate (mm/year) governed by soil corrosivity and water proximity
+        corrosion_rate_mm_yr = round(float(np.clip(0.04 + c_soil_corr * 0.38 + np.random.uniform(0.0, 0.04), 0.02, 0.50)), 3)
+        thickness_loss = round(float(min(design_t * 0.80, corrosion_rate_mm_yr * op_age)), 2)
+        remaining_t = round(float(max(1.0, design_t - thickness_loss)), 2)
+        material_loss_pct = round(float((thickness_loss / design_t) * 100.0), 1)
+
+        # Condition classification aligned with Kaggle predictive maintenance standards
+        if thickness_loss >= 5.0 or material_loss_pct >= 35.0:
+            degradation_condition = "Critical"
+        elif thickness_loss >= 2.0 or material_loss_pct >= 15.0:
+            degradation_condition = "Moderate"
+        else:
+            degradation_condition = "Normal"
+
         results.append({
             "kp": kp,
             "pipeline_id": route_info["id"],
@@ -453,6 +497,13 @@ def calculate_quantitative_determinants(kp_list, route_info, elevations):
             "operating_pressure_psig": route_info["operating_pressure_psig"],
             "pipe_material": route_info["pipe_material"],
             "design_wall_thickness_mm": route_info["design_wall_thickness_mm"],
+            # Wall Thickness & Corrosion Degradation
+            "operational_age_years": op_age,
+            "corrosion_rate_mm_per_year": corrosion_rate_mm_yr,
+            "thickness_loss_mm": thickness_loss,
+            "remaining_wall_thickness_mm": remaining_t,
+            "material_loss_percent": material_loss_pct,
+            "degradation_condition": degradation_condition,
             # Failure Output
             "failure_probability": pof,
             "failure_probability_percent": pof_percent,
@@ -521,6 +572,12 @@ def generate_all_data():
                 "risk_label": overall_risk,
                 "critical_kps_count": critical_count,
                 "high_kps_count": high_count,
+                "construction_start_date": route.get("construction_start_date"),
+                "construction_age_years": route.get("construction_age_years"),
+                "operational_start_date": route.get("operational_start_date"),
+                "operational_age_years": route.get("operational_age_years"),
+                "operational_status": route.get("operational_status"),
+                "commissioning_note": route.get("commissioning_note"),
             },
             "geometry": {
                 "type": "LineString",
