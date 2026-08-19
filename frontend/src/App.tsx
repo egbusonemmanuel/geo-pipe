@@ -707,7 +707,7 @@ function App() {
 
         {/* Map Container */}
         <div
-          className="accessible-map-wrapper"
+          className={`accessible-map-wrapper ${show3D ? 'mode-3d' : ''}`}
           role="application"
           aria-label="Pipeline risk map"
           tabIndex={0}
