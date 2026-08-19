@@ -98,7 +98,8 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [show3D, setShow3D] = useState<boolean>(true);
-  const [threeDIntensity, setThreeDIntensity] = useState<number>(12);
+  const [tiltPitch, setTiltPitch] = useState<number>(28);
+  const [threeDIntensity, setThreeDIntensity] = useState<number>(18);
   const mapRef = useRef<LeafletMap | null>(null);
 
   const selectedPipeline = useMemo(() => {
@@ -175,17 +176,9 @@ function App() {
     const out: [number, number][] = [];
     for (let i = 0; i < coords.length; i++) {
       const [lon, lat] = coords[i];
-      const prev = coords[Math.max(0, i - 1)];
-      const next = coords[Math.min(coords.length - 1, i + 1)];
-      const vx = next[0] - prev[0];
-      const vy = next[1] - prev[1];
-      const nx = -vy;
-      const ny = vx;
-      const norm = Math.sqrt(nx * nx + ny * ny) || 1e-9;
-      const ux = nx / norm;
-      const uy = ny / norm;
-      const dlat = metersToDegLat(offsetMeters * uy);
-      const dlon = metersToDegLon(offsetMeters * ux, lat);
+      // Isometric upward vertical displacement in degrees for 3D elevation floating effect
+      const dlat = metersToDegLat(offsetMeters * 35.0);
+      const dlon = metersToDegLon(offsetMeters * 18.0, lat);
       out.push([lat + dlat, lon + dlon]);
     }
     return out;
@@ -367,27 +360,58 @@ function App() {
 
           <div className="filter-row">
             <div className="filter-group">
-              <label htmlFor="rendering-effect-toggle">Pipeline Rendering</label>
-              <div className="rendering-controls">
-                <button
-                  id="rendering-effect-toggle"
-                  className={`chip-btn ${show3D ? 'active' : ''}`}
-                  onClick={() => setShow3D((s) => !s)}
-                >
-                  {show3D ? '3D Effect On' : '3D Effect Off'}
-                </button>
-                <div className="slider-wrapper">
-                  <input
-                    type="range"
-                    min={0}
-                    max={40}
-                    value={threeDIntensity}
-                    onChange={(e) => setThreeDIntensity(Number(e.target.value))}
-                    aria-label="Pipeline elevation effect intensity"
-                    className="range-slider"
-                  />
-                  <span className="slider-value">{threeDIntensity}</span>
+              <label htmlFor="rendering-effect-toggle">3D Pipeline & Terrain Perspective</label>
+              <div className="rendering-controls" style={{ flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button
+                    id="rendering-effect-toggle"
+                    className={`chip-btn ${show3D ? 'active' : ''}`}
+                    onClick={() => setShow3D((s) => !s)}
+                    style={{ flex: 1 }}
+                  >
+                    {show3D ? '✨ 3D Mode: Active' : '2D Flat Mode'}
+                  </button>
+                  {show3D && (
+                    <>
+                      <button
+                        className={`chip-btn ${tiltPitch === 0 ? 'active' : ''}`}
+                        onClick={() => setTiltPitch(0)}
+                        title="Top-down 0°"
+                      >
+                        0°
+                      </button>
+                      <button
+                        className={`chip-btn ${tiltPitch === 25 ? 'active' : ''}`}
+                        onClick={() => setTiltPitch(25)}
+                        title="Isometric 25°"
+                      >
+                        25°
+                      </button>
+                      <button
+                        className={`chip-btn ${tiltPitch === 38 ? 'active' : ''}`}
+                        onClick={() => setTiltPitch(38)}
+                        title="Cinematic 38°"
+                      >
+                        38°
+                      </button>
+                    </>
+                  )}
                 </div>
+                {show3D && (
+                  <div className="slider-wrapper">
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>3D Altitude Relief</span>
+                    <input
+                      type="range"
+                      min={0}
+                      max={40}
+                      value={threeDIntensity}
+                      onChange={(e) => setThreeDIntensity(Number(e.target.value))}
+                      aria-label="Pipeline elevation effect intensity"
+                      className="range-slider"
+                    />
+                    <span className="slider-value">{threeDIntensity}m</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -711,135 +735,171 @@ function App() {
           role="application"
           aria-label="Pipeline risk map"
           tabIndex={0}
+          style={{
+            perspective: show3D && tiltPitch > 0 ? '1100px' : 'none',
+            overflow: 'hidden',
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+          }}
         >
-          <MapContainer
-            center={mapCenter}
-            zoom={mapZoom}
-            scrollWheelZoom
-            style={{ width: '100%', height: '100%' }}
-            className="accessible-map"
+          <div
+            className="map-3d-viewport"
+            style={{
+              width: '100%',
+              height: '100%',
+              transform: show3D && tiltPitch > 0 ? `rotateX(${tiltPitch}deg) scale(1.08) translateY(-16px)` : 'none',
+              transformOrigin: '50% 85%',
+              transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
           >
-            <MapUpdater center={mapCenter} zoom={mapZoom} mapRef={mapRef} />
-            <TileLayer
-              key={activeLayer}
-              attribution={currentTile.attribution}
-              url={currentTile.url}
-            />
+            <MapContainer
+              center={mapCenter}
+              zoom={mapZoom}
+              scrollWheelZoom
+              style={{ width: '100%', height: '100%' }}
+              className="accessible-map"
+            >
+              <MapUpdater center={mapCenter} zoom={mapZoom} mapRef={mapRef} />
+              <TileLayer
+                key={activeLayer}
+                attribution={currentTile.attribution}
+                url={currentTile.url}
+              />
 
-            {/* Holographic pipeline rendering with glow and flow accents */}
-            {pipelines?.features.map((f: any, idx: number) => {
-              const coords = f.geometry.coordinates as [number, number][];
-              const props = f.properties as PipelineProperties;
-              const isSelected = selectedPipelineId === props.pipeline_id;
-              const routeColor = RISK_COLORS[props.risk_label] || '#7c3aed';
-              const intensity = show3D ? threeDIntensity : 0;
-              const shadow = computeOffsetLine(coords, intensity * 0.6) as LatLngExpression[];
-              const highlight = computeOffsetLine(coords, intensity * 0.2) as LatLngExpression[];
-              const route = coords.map(([lon, lat]) => [lat, lon] as [number, number]);
+              {/* Holographic 3D pipeline rendering with glow and flow accents */}
+              {pipelines?.features.map((f: any, idx: number) => {
+                const coords = f.geometry.coordinates as [number, number][];
+                const props = f.properties as PipelineProperties;
+                const isSelected = selectedPipelineId === props.pipeline_id;
+                const routeColor = RISK_COLORS[props.risk_label] || '#7c3aed';
+                const intensity = show3D ? threeDIntensity : 0;
+                const shadow = computeOffsetLine(coords, -intensity * 0.4) as LatLngExpression[];
+                const elevated = computeOffsetLine(coords, intensity * 0.8) as LatLngExpression[];
+                const highlight = computeOffsetLine(coords, intensity * 0.85) as LatLngExpression[];
+                const route = coords.map(([lon, lat]) => [lat, lon] as [number, number]);
 
-              return (
-                <Fragment key={`pl-${idx}`}>
-                  {show3D && (
+                return (
+                  <Fragment key={`pl-${idx}`}>
+                    {show3D && (
+                      <>
+                        {/* Ground Shadow Layer */}
+                        <Polyline
+                          positions={shadow}
+                          pathOptions={{
+                            color: '#020617',
+                            weight: 18,
+                            opacity: 0.55,
+                            lineCap: 'round',
+                            lineJoin: 'round',
+                            className: 'pipeline-shadow',
+                          }}
+                        />
+                        {/* 3D Volumetric Bloom Halo */}
+                        <Polyline
+                          positions={elevated}
+                          pathOptions={{
+                            color: routeColor,
+                            weight: isSelected ? 18 : 14,
+                            opacity: 0.35,
+                            lineCap: 'round',
+                            lineJoin: 'round',
+                            className: 'pipeline-halo',
+                          }}
+                        />
+                      </>
+                    )}
+                    {/* Elevated 3D Pipe Core Line */}
                     <Polyline
-                      positions={shadow}
+                      positions={show3D ? elevated : route}
                       pathOptions={{
-                        color: 'rgba(99, 102, 241, 0.18)',
-                        weight: 18,
-                        opacity: 0.45,
+                        color: routeColor,
+                        weight: isSelected ? 10 : 7,
+                        opacity: 1.0,
                         lineCap: 'round',
                         lineJoin: 'round',
-                        className: 'pipeline-halo',
+                        className: `pipeline-core ${isSelected ? 'selected' : ''}`,
                       }}
                     />
-                  )}
-                  <Polyline
-                    positions={route}
-                    pathOptions={{
-                      color: routeColor,
-                      weight: isSelected ? 12 : 8,
-                      opacity: 0.9,
-                      lineCap: 'round',
-                      lineJoin: 'round',
-                      className: `pipeline-core ${isSelected ? 'selected' : ''}`,
-                    }}
-                  />
-                  <Polyline
-                    positions={highlight}
-                    pathOptions={{
-                      color: '#f8fafc',
-                      weight: isSelected ? 3 : 2,
-                      opacity: 0.75,
-                      dashArray: '10, 12',
-                      lineCap: 'round',
-                      lineJoin: 'round',
-                      className: 'pipeline-highlight',
-                    }}
-                  />
-                </Fragment>
-              );
-            })}
+                    {/* Top Laser Flow Ribbon */}
+                    <Polyline
+                      positions={show3D ? highlight : route}
+                      pathOptions={{
+                        color: '#ffffff',
+                        weight: isSelected ? 3 : 2,
+                        opacity: 0.85,
+                        dashArray: '10, 14',
+                        lineCap: 'round',
+                        lineJoin: 'round',
+                        className: 'pipeline-highlight',
+                      }}
+                    />
+                  </Fragment>
+                );
+              })}
 
-            {/* Metering Station Markers */}
-            {stations.map((st) => (
-              <Marker
-                key={st.id}
-                position={[st.coordinates[1], st.coordinates[0]]}
-                icon={stationIcon(st.name, st.id === 'ST-01')}
-                eventHandlers={{
-                  click: () => handleStationClick(st),
-                }}
-              >
-                <Popup className="station-popup">
-                  <div>
-                    <h3>⚡ {st.name}</h3>
-                    <p><strong>Type:</strong> {st.type}</p>
-                    <p><strong>Capacity:</strong> {st.capacity_mmscfd} MMSCFD</p>
-                    <p><strong>Location:</strong> Kogi State, Nigeria</p>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-
-            {/* KP Circle Markers along pipelines */}
-            {filteredKPs.map((kp) => {
-              const isSelected = selectedKP?.kp === kp.kp && selectedKP?.pipeline_id === kp.pipeline_id;
-              return (
-                <CircleMarker
-                  key={`kp-${kp.pipeline_id}-${kp.kp}`}
-                  center={[kp.latitude, kp.longitude]}
-                  radius={isSelected ? 9 : kp.risk_class === 'Critical' ? 7 : 5}
-                  pathOptions={{
-                    fillColor: RISK_COLORS[kp.risk_class],
-                    fillOpacity: isSelected ? 1.0 : 0.85,
-                    color: isSelected ? '#ffffff' : '#000000',
-                    weight: isSelected ? 3 : 1,
-                  }}
+              {/* Metering Station Markers */}
+              {stations.map((st) => (
+                <Marker
+                  key={st.id}
+                  position={[st.coordinates[1], st.coordinates[0]]}
+                  icon={stationIcon(st.name, st.id === 'ST-01')}
                   eventHandlers={{
-                    click: () => handleKPClick(kp),
+                    click: () => handleStationClick(st),
                   }}
                 >
-                  <Popup className="kp-popup">
-                    <div className="popup-content">
-                      <div className="popup-header">
-                        <strong>{kp.pipeline_code} — KP {kp.kp} km</strong>
-                        <span className={`popup-risk ${kp.risk_class.toLowerCase()}`}>
-                          {kp.risk_class} Risk
-                        </span>
-                      </div>
-                      <div className="popup-body">
-                        <p><strong>PoF:</strong> {kp.failure_probability_percent}%</p>
-                        <p><strong>Primary Cause:</strong> {kp.primary_hazard}</p>
-                        <p><strong>Flood Index:</strong> {(kp.flooding_index ?? 0).toFixed(2)} | <strong>Seismic Factor:</strong> {(kp.earthquake_factor ?? 0).toFixed(2)}</p>
-                        {kp.remaining_wall_thickness_mm !== undefined && (
-                          <p><strong>Wall Thickness:</strong> {kp.remaining_wall_thickness_mm}mm ({kp.degradation_condition || 'Normal'})</p>
-                        )}
-                      </div>
+                  <Popup className="station-popup">
+                    <div>
+                      <h3>⚡ {st.name}</h3>
+                      <p><strong>Type:</strong> {st.type}</p>
+                      <p><strong>Capacity:</strong> {st.capacity_mmscfd} MMSCFD</p>
+                      <p><strong>Location:</strong> Kogi State, Nigeria</p>
                     </div>
                   </Popup>
-                </CircleMarker>
-              );
-            })}
-          </MapContainer>
+                </Marker>
+              ))}
+
+              {/* KP Circle Markers along pipelines */}
+              {filteredKPs.map((kp) => {
+                const isSelected = selectedKP?.kp === kp.kp && selectedKP?.pipeline_id === kp.pipeline_id;
+                return (
+                  <CircleMarker
+                    key={`kp-${kp.pipeline_id}-${kp.kp}`}
+                    center={[kp.latitude, kp.longitude]}
+                    radius={isSelected ? 9 : kp.risk_class === 'Critical' ? 7 : 5}
+                    pathOptions={{
+                      fillColor: RISK_COLORS[kp.risk_class],
+                      fillOpacity: isSelected ? 1.0 : 0.85,
+                      color: isSelected ? '#ffffff' : '#000000',
+                      weight: isSelected ? 3 : 1,
+                    }}
+                    eventHandlers={{
+                      click: () => handleKPClick(kp),
+                    }}
+                  >
+                    <Popup className="kp-popup">
+                      <div className="popup-content">
+                        <div className="popup-header">
+                          <strong>{kp.pipeline_code} — KP {kp.kp} km</strong>
+                          <span className={`popup-risk ${kp.risk_class.toLowerCase()}`}>
+                            {kp.risk_class} Risk
+                          </span>
+                        </div>
+                        <div className="popup-body">
+                          <p><strong>PoF:</strong> {kp.failure_probability_percent}%</p>
+                          <p><strong>Primary Cause:</strong> {kp.primary_hazard}</p>
+                          <p><strong>Flood Index:</strong> {(kp.flooding_index ?? 0).toFixed(2)} | <strong>Seismic Factor:</strong> {(kp.earthquake_factor ?? 0).toFixed(2)}</p>
+                          {kp.remaining_wall_thickness_mm !== undefined && (
+                            <p><strong>Wall Thickness:</strong> {kp.remaining_wall_thickness_mm}mm ({kp.degradation_condition || 'Normal'})</p>
+                          )}
+                        </div>
+                      </div>
+                    </Popup>
+                  </CircleMarker>
+                );
+              })}
+            </MapContainer>
+          </div>
         </div>
 
         {/* Legend */}
