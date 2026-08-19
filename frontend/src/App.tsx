@@ -27,86 +27,183 @@ const API_BASE =
     ? 'https://pipe-ai-backend.onrender.com/api'
     : 'http://127.0.0.1:8000/api');
 
-// High-visibility Risk Colors
+// Simple, friendly risk color map
 const RISK_COLORS: Record<RiskLevel, string> = {
-  Low: '#10b981',
-  Medium: '#f59e0b',
-  High: '#f97316',
-  Critical: '#ef4444',
+  Low: '#10b981',      // Green - Safe & Healthy
+  Medium: '#f59e0b',   // Yellow - Moderate Attention
+  High: '#f97316',     // Orange - High Priority
+  Critical: '#ef4444', // Red - Urgent Action
 };
 
-// Route Themes
-const ROUTE_THEMES: Record<number, { name: string; color: string; glow: string; code: string; diameter: string; pressure: string; steel: string }> = {
-  1: { name: 'AKK Section 1 (Ajaokuta–Abaji)', color: '#f59e0b', glow: 'rgba(245, 158, 11, 0.45)', code: 'AKK-S1', diameter: '40"', pressure: '1440 psig', steel: 'API 5L X80' },
-  2: { name: 'Geregu Power Plant Feeder', color: '#06b6d4', glow: 'rgba(6, 182, 212, 0.45)', code: 'GPP-FDR', diameter: '24"', pressure: '1000 psig', steel: 'API 5L X65' },
-  3: { name: 'Obajana Cement Industrial Gas Line', color: '#ec4899', glow: 'rgba(236, 72, 153, 0.45)', code: 'OBJ-IND', diameter: '18"', pressure: '850 psig', steel: 'API 5L X52' },
-  4: { name: 'Oben–Ajaokuta Trunk Line', color: '#8b5cf6', glow: 'rgba(139, 92, 246, 0.45)', code: 'OBN-AJK', diameter: '24"', pressure: '1200 psig', steel: 'API 5L X65' },
+// Route Themes with friendly plain-English names
+const ROUTE_THEMES: Record<number, { name: string; shortName: string; color: string; code: string; diameter: string; purpose: string }> = {
+  1: {
+    name: 'Ajaokuta–Kaduna–Kano (AKK) Section 1',
+    shortName: 'AKK Trunkline',
+    color: '#f59e0b',
+    code: 'AKK-S1',
+    diameter: '40-inch Gas Main',
+    purpose: 'Main interstate trunkline feeding northwards towards Abuja/Kaduna',
+  },
+  2: {
+    name: 'Geregu Power Generation Supply Feeder',
+    shortName: 'Geregu Power Line',
+    color: '#06b6d4',
+    code: 'GPP-FDR',
+    diameter: '24-inch High Pressure',
+    purpose: 'Supplies gas to 884 MW Geregu I & II national grid power plant',
+  },
+  3: {
+    name: 'Obajana Dangote Cement Industrial Line',
+    shortName: 'Obajana Cement Line',
+    color: '#ec4899',
+    code: 'OBJ-IND',
+    diameter: '18-inch Industrial',
+    purpose: 'Supplies continuous gas to Africa’s largest cement manufacturing plant',
+  },
+  4: {
+    name: 'Oben–Ajaokuta Western Feed Trunkline',
+    shortName: 'Oben–Ajaokuta Line',
+    color: '#8b5cf6',
+    code: 'OBN-AJK',
+    diameter: '24-inch Mainline',
+    purpose: 'Transports raw feed gas across the Edo–Kogi state boundary to Ajaokuta',
+  },
 };
 
-// Tile Layers
+// Tile layers (crisp Google satellite default)
 const TILE_LAYERS = {
   satellite: {
-    label: '🛰️ Vivid Satellite',
+    label: '🛰️ Real Satellite',
     url: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
-    attribution: '&copy; Google / Maxar High-Res Satellite',
+    attribution: '&copy; Google / Maxar High-Res Satellite Imagery',
     maxZoom: 20,
   },
   esri: {
-    label: '🏢 High-Res Infra',
+    label: '🏢 High-Res Buildings',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     attribution: '&copy; Esri, Maxar, Earthstar Geographics',
     maxZoom: 19,
   },
   dark: {
-    label: '🌑 Tactical Dark',
+    label: '🌑 Clean Dark Map',
     url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
     attribution: '&copy; OpenStreetMap &copy; CARTO',
     maxZoom: 19,
-  },
-  terrain: {
-    label: '🏔️ Topo Relief',
-    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-    attribution: '&copy; OpenStreetMap | OpenTopoMap',
-    maxZoom: 17,
   },
 };
 
 type LayerKey = keyof typeof TILE_LAYERS;
 
-// Key Industrial Landmarks
-const LANDMARKS = [
-  { id: 'L1', name: 'Ajaokuta Steel Complex & Gas Terminal', icon: '🏭', coords: [7.5564, 6.6552] as [number, number], type: 'Gas Terminal & Steel Plant', poly: [[7.542, 6.642], [7.542, 6.672], [7.572, 6.672], [7.572, 6.642]] as [number, number][], color: '#06b6d4', desc: 'Central gas injection terminal, blast furnace facilities, and thermal power plant.' },
-  { id: 'L2', name: 'Geregu I & II Power Generating Station', icon: '⚡', coords: [7.4716, 6.6603] as [number, number], type: '884 MW Thermal Power Station', poly: [[7.462, 6.652], [7.462, 6.670], [7.481, 6.670], [7.481, 6.652]] as [number, number][], color: '#f59e0b', desc: 'Siemens gas turbines, 330kV transmission switchyard, and metering station.' },
-  { id: 'L3', name: 'Obajana Cement Mega-Plant Complex', icon: '🏗️', coords: [7.9150, 6.4350] as [number, number], type: '13.25 MTPA Cement Works', poly: [[7.902, 6.422], [7.902, 6.452], [7.928, 6.452], [7.928, 6.422]] as [number, number][], color: '#ec4899', desc: '4 rotary kiln lines, clinker silos, 135 MW captive gas power plant.' },
-  { id: 'L4', name: 'Lokoja River Port & Confluence Center', icon: '🚢', coords: [7.7300, 6.7400] as [number, number], type: 'Niger Confluence Port', poly: [[7.718, 6.728], [7.718, 6.752], [7.742, 6.752], [7.742, 6.728]] as [number, number][], color: '#3b82f6', desc: 'River Niger/Benue confluence navigation base and monitor station.' },
-  { id: 'L5', name: 'Jamata HDD River Niger Crossing Rig', icon: '🌊', coords: [7.8500, 6.8900] as [number, number], type: 'Sub-River Directional Drilling Rig', poly: [[7.838, 6.880], [7.838, 6.902], [7.862, 6.902], [7.862, 6.880]] as [number, number][], color: '#06b6d4', desc: 'Horizontal Directional Drilling entry/exit pads and submerged concrete weighting mats.' },
+// Strategic Key Locations
+const STRATEGIC_HUBS = [
+  {
+    id: 'HUB-1',
+    name: 'Ajaokuta Steel Plant & Central Gas Hub',
+    shortName: 'Ajaokuta Steel Hub',
+    icon: '🏭',
+    coords: [7.5564, 6.6552] as [number, number],
+    type: 'Central Injection Terminal',
+    poly: [[7.542, 6.642], [7.542, 6.672], [7.572, 6.672], [7.572, 6.642]] as [number, number][],
+    color: '#06b6d4',
+    summary: 'The main heart of the network where natural gas is received, metered, and distributed.',
+  },
+  {
+    id: 'HUB-2',
+    name: 'Geregu Power Generating Station',
+    shortName: 'Geregu Power Station',
+    icon: '⚡',
+    coords: [7.4716, 6.6603] as [number, number],
+    type: '884 MW Thermal Power Plant',
+    poly: [[7.462, 6.652], [7.462, 6.670], [7.481, 6.670], [7.481, 6.652]] as [number, number][],
+    color: '#f59e0b',
+    summary: 'Powers millions of homes and businesses via national grid turbines.',
+  },
+  {
+    id: 'HUB-3',
+    name: 'Obajana Cement Mega-Plant',
+    shortName: 'Obajana Cement Factory',
+    icon: '🏗️',
+    coords: [7.9150, 6.4350] as [number, number],
+    type: 'Mega Industrial Production',
+    poly: [[7.902, 6.422], [7.902, 6.452], [7.928, 6.452], [7.928, 6.422]] as [number, number][],
+    color: '#ec4899',
+    summary: 'Consumes massive gas volume for 4 giant rotary kilns and captive power plant.',
+  },
+  {
+    id: 'HUB-4',
+    name: 'Jamata River Niger Underwater Crossing',
+    shortName: 'River Niger Crossing',
+    icon: '🌊',
+    coords: [7.8500, 6.8900] as [number, number],
+    type: 'Critical Underwater Pipeline Trench',
+    poly: [[7.838, 6.880], [7.838, 6.902], [7.862, 6.902], [7.862, 6.880]] as [number, number][],
+    color: '#3b82f6',
+    summary: 'Where the pipeline dives deep beneath the River Niger floodbed.',
+  },
+  {
+    id: 'HUB-5',
+    name: 'Lokoja River Confluence Port',
+    shortName: 'Lokoja Port',
+    icon: '🚢',
+    coords: [7.7300, 6.7400] as [number, number],
+    type: 'Confluence Navigation Base',
+    poly: [[7.718, 6.728], [7.718, 6.752], [7.742, 6.752], [7.742, 6.728]] as [number, number][],
+    color: '#10b981',
+    summary: 'Confluence point of River Niger and River Benue with key emergency staging base.',
+  },
 ];
 
-// Physical Geo-Hazard Zones
-const FLOOD_CORRIDOR: [number, number][] = [
-  [7.52, 6.64], [7.57, 6.67], [7.62, 6.70], [7.71, 6.76], [7.82, 6.87],
-  [7.90, 6.92], [7.92, 6.88], [7.80, 6.82], [7.68, 6.72], [7.59, 6.66], [7.50, 6.62],
-];
-const FAULT_TRACE: [number, number][] = [
-  [7.35, 6.45], [7.58, 6.62], [7.78, 6.82], [8.05, 7.05], [8.25, 7.22],
+// Interactive Guided Tour Steps
+const GUIDED_TOUR_STEPS = [
+  {
+    title: 'Welcome to Pipe.AI — Kogi Pipeline Digital Twin',
+    coords: [7.62, 6.70] as [number, number],
+    zoom: 10,
+    text: 'This system continuously monitors over 370 kilometers of critical gas pipelines across Kogi State using Machine Learning and Satellite Geo-Hazard Intelligence.',
+  },
+  {
+    title: '1. Ajaokuta Central Gas Injection Hub',
+    coords: [7.5564, 6.6552] as [number, number],
+    zoom: 14,
+    text: 'This is the nerve center in Ajaokuta where high-pressure natural gas from the south is processed and routed to power plants and factories.',
+  },
+  {
+    title: '2. Jamata River Niger Underwater Crossing (High Risk Zone)',
+    coords: [7.8500, 6.8900] as [number, number],
+    zoom: 14,
+    text: 'At this River Niger crossing, high water velocity causes riverbed erosion (scour). Pipe.AI flags this area as High Risk so engineers can reinforce it before issues occur.',
+  },
+  {
+    title: '3. Geregu Power Generation Station Feeder',
+    coords: [7.4716, 6.6603] as [number, number],
+    zoom: 14,
+    text: 'This line delivers high-pressure fuel directly to the Geregu I & II turbines generating 884 MW of electricity for the national grid.',
+  },
+  {
+    title: '4. Obajana Cement Industrial Supply Line',
+    coords: [7.9150, 6.4350] as [number, number],
+    zoom: 13,
+    text: 'Traversing the hilly terrain to Obajana, this pipeline powers Africa’s largest cement manufacturing facility 24 hours a day.',
+  },
 ];
 
 // Custom Station Marker Icon
-const stationIcon = (name: string, isMain: boolean) =>
+const stationIcon = (name: string) =>
   L.divIcon({
     className: 'custom-station-icon',
-    html: `<div class="station-badge ${isMain ? 'main' : ''}"><span class="badge-icon">⚡</span><span class="badge-text">${name}</span></div>`,
-    iconSize: [120, 32],
-    iconAnchor: [60, 16],
+    html: `<div class="friendly-station-pin">⚡ ${name}</div>`,
+    iconSize: [110, 28],
+    iconAnchor: [55, 14],
   });
 
 // Custom Landmark Marker Icon
-const landmarkIcon = (icon: string, name: string, color: string) =>
+const landmarkIcon = (icon: string, name: string) =>
   L.divIcon({
     className: 'custom-landmark-icon',
-    html: `<div class="landmark-badge" style="border-color: ${color};"><span class="landmark-icon">${icon}</span><span class="landmark-text">${name}</span></div>`,
-    iconSize: [140, 32],
-    iconAnchor: [70, 16],
+    html: `<div class="friendly-hub-pin">${icon} ${name}</div>`,
+    iconSize: [130, 28],
+    iconAnchor: [65, 14],
   });
 
 function MapUpdater({
@@ -127,7 +224,7 @@ function MapUpdater({
 }
 
 // =====================================================================
-// MAIN APP COMPONENT
+// MAIN FRIENDLY USER-FIRST APP
 // =====================================================================
 function App() {
   const [pipelines, setPipelines] = useState<PipelineCollection | null>(null);
@@ -136,22 +233,20 @@ function App() {
   const [selectedPipelineId, setSelectedPipelineId] = useState<number | null>(null);
   const [selectedKP, setSelectedKP] = useState<KPFeature | null>(null);
   const [activeLayer, setActiveLayer] = useState<LayerKey>('satellite');
-  const [riskFilter, setRiskFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [viewMode, setViewMode] = useState<'simple' | 'advanced'>('simple');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Layer Visibility
-  const [showFlood, setShowFlood] = useState(true);
-  const [showFault, setShowFault] = useState(true);
-  const [showLandmarks, setShowLandmarks] = useState(true);
+  // Guided Tour State
+  const [tourIndex, setTourIndex] = useState<number | null>(null);
 
-  // Inspector Panel State (Open/Close)
-  const [isInspectorOpen, setIsInspectorOpen] = useState(true);
-
+  // Map state
+  const [mapCenter, setMapCenter] = useState<[number, number]>([7.62, 6.70]);
+  const [mapZoom, setMapZoom] = useState<number>(11);
   const mapRef = useRef<LeafletMap | null>(null);
 
-  // Initial Data Fetch
+  // Load Data
   useEffect(() => {
     (async () => {
       try {
@@ -161,7 +256,7 @@ function App() {
           fetch(`${API_BASE}/stations`),
           fetch(`${API_BASE}/kp-features`),
         ]);
-        if (!pR.ok || !sR.ok || !kR.ok) throw new Error('Failed to load API data');
+        if (!pR.ok || !sR.ok || !kR.ok) throw new Error('Could not connect to Pipe.AI backend');
         const pipelinesData: PipelineCollection = await pR.json();
         const stationsData: MeteringStation[] = await sR.json();
         const kpData: KPFeature[] = await kR.json();
@@ -170,9 +265,9 @@ function App() {
         setStations(stationsData);
         setKpFeatures(kpData);
 
-        // Select the highest risk KP initially
-        const criticalKP = kpData.find((k) => k.risk_class === 'Critical') || kpData[0];
-        if (criticalKP) setSelectedKP(criticalKP);
+        // Select first interesting high-risk KP as default friendly preview
+        const highlightedKP = kpData.find((k) => k.risk_class === 'Critical') || kpData[0];
+        if (highlightedKP) setSelectedKP(highlightedKP);
       } catch (err) {
         setError(String(err));
       } finally {
@@ -181,15 +276,10 @@ function App() {
     })();
   }, []);
 
-  // Map Center
-  const [mapCenter, setMapCenter] = useState<[number, number]>([7.62, 6.70]);
-  const [mapZoom, setMapZoom] = useState<number>(11);
-
   // Filtered KPs
   const filteredKPs = useMemo(() => {
     return kpFeatures.filter((kp) => {
       if (selectedPipelineId !== null && kp.pipeline_id !== selectedPipelineId) return false;
-      if (riskFilter !== 'all' && kp.risk_class.toLowerCase() !== riskFilter.toLowerCase()) return false;
       if (searchQuery.trim() !== '') {
         const q = searchQuery.toLowerCase();
         const matchesKP = `kp ${kp.kp}`.includes(q) || `${kp.kp}` === q;
@@ -199,96 +289,105 @@ function App() {
       }
       return true;
     });
-  }, [kpFeatures, selectedPipelineId, riskFilter, searchQuery]);
+  }, [kpFeatures, selectedPipelineId, searchQuery]);
 
-  // Overall Statistics
-  const stats = useMemo(() => {
-    const c = { Critical: 0, High: 0, Medium: 0, Low: 0 };
-    let totalPoF = 0;
-    for (const kp of filteredKPs) {
-      c[kp.risk_class] = (c[kp.risk_class] || 0) + 1;
-      totalPoF += kp.failure_probability;
+  // Overall Health Summary
+  const healthStats = useMemo(() => {
+    const total = kpFeatures.length;
+    if (total === 0) return { healthPercent: 100, criticalCount: 0, healthyCount: 0, attentionCount: 0 };
+    let criticalCount = 0;
+    let attentionCount = 0;
+    let healthyCount = 0;
+
+    for (const k of kpFeatures) {
+      if (k.risk_class === 'Critical') criticalCount++;
+      else if (k.risk_class === 'High' || k.risk_class === 'Medium') attentionCount++;
+      else healthyCount++;
     }
-    const total = filteredKPs.length;
-    const avgPoF = total > 0 ? (totalPoF / total) * 100 : 0;
-    return { ...c, total, avgPoF };
-  }, [filteredKPs]);
 
-  // Critical Alerts List (Top 6 most vulnerable KPs)
-  const criticalHotspots = useMemo(() => {
+    const healthPercent = Math.round((healthyCount / total) * 100);
+    return { healthPercent, criticalCount, healthyCount, attentionCount };
+  }, [kpFeatures]);
+
+  // Most Critical Points to Inspect (Top 5)
+  const topCriticalList = useMemo(() => {
     return [...kpFeatures]
       .filter((k) => k.risk_class === 'Critical' || k.risk_class === 'High')
       .sort((a, b) => b.failure_probability - a.failure_probability)
-      .slice(0, 8);
+      .slice(0, 5);
   }, [kpFeatures]);
 
-  // Selection Handlers
+  // Handle KP Selection
   const handleSelectKP = (kp: KPFeature) => {
     setSelectedKP(kp);
-    setIsInspectorOpen(true);
     setMapCenter([kp.latitude, kp.longitude]);
     setMapZoom(14);
   };
 
-  const handleNextKP = () => {
-    if (!selectedKP) return;
-    const currIdx = filteredKPs.findIndex((k) => k.kp === selectedKP.kp && k.pipeline_id === selectedKP.pipeline_id);
-    if (currIdx >= 0 && currIdx < filteredKPs.length - 1) {
-      handleSelectKP(filteredKPs[currIdx + 1]);
+  // Handle Hub Selection
+  const handleSelectHub = (hub: typeof STRATEGIC_HUBS[0]) => {
+    setMapCenter(hub.coords);
+    setMapZoom(14);
+  };
+
+  // Start / Advance Guided Tour
+  const handleStartTour = () => {
+    setTourIndex(0);
+    setMapCenter(GUIDED_TOUR_STEPS[0].coords);
+    setMapZoom(GUIDED_TOUR_STEPS[0].zoom);
+  };
+
+  const handleNextTourStep = () => {
+    if (tourIndex === null) return;
+    if (tourIndex < GUIDED_TOUR_STEPS.length - 1) {
+      const nextIdx = tourIndex + 1;
+      setTourIndex(nextIdx);
+      setMapCenter(GUIDED_TOUR_STEPS[nextIdx].coords);
+      setMapZoom(GUIDED_TOUR_STEPS[nextIdx].zoom);
+    } else {
+      setTourIndex(null); // End tour
     }
   };
 
-  const handlePrevKP = () => {
-    if (!selectedKP) return;
-    const currIdx = filteredKPs.findIndex((k) => k.kp === selectedKP.kp && k.pipeline_id === selectedKP.pipeline_id);
-    if (currIdx > 0) {
-      handleSelectKP(filteredKPs[currIdx - 1]);
-    }
-  };
-
-  const handleLandmarkClick = (lm: typeof LANDMARKS[0]) => {
-    setMapCenter(lm.coords);
-    setMapZoom(15);
+  const handlePrevTourStep = () => {
+    if (tourIndex === null || tourIndex <= 0) return;
+    const prevIdx = tourIndex - 1;
+    setTourIndex(prevIdx);
+    setMapCenter(GUIDED_TOUR_STEPS[prevIdx].coords);
+    setMapZoom(GUIDED_TOUR_STEPS[prevIdx].zoom);
   };
 
   const handleResetMap = () => {
     setMapCenter([7.62, 6.70]);
     setMapZoom(11);
     setSelectedPipelineId(null);
-    setRiskFilter('all');
     setSearchQuery('');
+    setTourIndex(null);
   };
 
   const currentTile = TILE_LAYERS[activeLayer];
 
   return (
-    <div className="dashboard-container">
+    <div className="friendly-app-container">
       {/* =========================================================
-          1. TOP EXECUTIVE COMMAND BAR (Clean, accessible, 1-click)
+          1. SIMPLE, FRIENDLY HEADER
           ========================================================= */}
-      <header className="top-command-bar">
-        {/* Brand & Status */}
-        <div className="brand-group">
-          <div className="brand-badge">
-            <span className="flame-icon">🔥</span>
-            <div className="brand-titles">
-              <h2>Pipe.AI</h2>
-              <span className="brand-tag">KOGI PIPELINE INTEGRITY TWIN</span>
-            </div>
-          </div>
-          <div className="live-status-pill">
-            <span className="pulse-dot"></span>
-            LIVE ML RISK ENGINE
+      <header className="friendly-header">
+        <div className="header-brand">
+          <div className="brand-logo-circle">🔥</div>
+          <div>
+            <h1 className="brand-name">Pipe.AI</h1>
+            <p className="brand-tagline">Nigeria Pipeline Safety & Health Monitor</p>
           </div>
         </div>
 
-        {/* Route Selector Pills */}
-        <div className="route-pills-bar">
+        {/* 1-Click Corridor Filter Buttons */}
+        <div className="friendly-route-selector">
           <button
-            className={`route-pill ${selectedPipelineId === null ? 'active' : ''}`}
+            className={`route-btn ${selectedPipelineId === null ? 'active' : ''}`}
             onClick={() => setSelectedPipelineId(null)}
           >
-            🌐 All 4 Corridors ({kpFeatures.length} KPs)
+            🌟 All 4 Pipelines (373 km)
           </button>
           {pipelines?.features.map((p) => {
             const pid = p.properties.pipeline_id;
@@ -297,146 +396,163 @@ function App() {
             return (
               <button
                 key={pid}
-                className={`route-pill ${isSel ? 'active' : ''}`}
-                style={isSel ? { borderColor: theme.color, boxShadow: `0 0 12px ${theme.glow}` } : {}}
+                className={`route-btn ${isSel ? 'active' : ''}`}
+                style={isSel ? { borderColor: theme.color, background: 'rgba(15, 23, 42, 0.95)' } : {}}
                 onClick={() => setSelectedPipelineId(pid)}
               >
-                <span className="color-indicator" style={{ background: theme.color }} />
-                {theme.code} — {theme.name.split('(')[0].trim()}
+                <span className="route-dot" style={{ background: theme.color }} />
+                {theme.shortName}
               </button>
             );
           })}
         </div>
 
-        {/* Search & Actions */}
-        <div className="header-actions">
-          <div className="quick-search-box">
-            <span className="search-icon">🔍</span>
+        {/* Search, Guided Tour & View Switcher */}
+        <div className="header-right-tools">
+          <button className="tour-button" onClick={handleStartTour}>
+            🎯 Guided Interactive Tour
+          </button>
+
+          <div className="simple-search-box">
+            <span className="search-ico">🔍</span>
             <input
               type="text"
-              placeholder="Search KP (e.g. KP 24, River Niger, Jamata)..."
+              placeholder="Search KP, Ajaokuta, River..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
-              <button className="clear-search-btn" onClick={() => setSearchQuery('')}>✕</button>
+              <button className="clear-ico" onClick={() => setSearchQuery('')}>✕</button>
             )}
           </div>
 
-          {/* Basemap Switcher */}
-          <div className="basemap-group">
-            {(Object.keys(TILE_LAYERS) as LayerKey[]).map((key) => (
-              <button
-                key={key}
-                className={`basemap-btn ${activeLayer === key ? 'active' : ''}`}
-                onClick={() => setActiveLayer(key)}
-              >
-                {TILE_LAYERS[key].label}
-              </button>
-            ))}
+          <div className="view-mode-toggle">
+            <button
+              className={`mode-btn ${viewMode === 'simple' ? 'active' : ''}`}
+              onClick={() => setViewMode('simple')}
+            >
+              👤 Simple View
+            </button>
+            <button
+              className={`mode-btn ${viewMode === 'advanced' ? 'active' : ''}`}
+              onClick={() => setViewMode('advanced')}
+            >
+              🔬 Engineering View
+            </button>
           </div>
         </div>
       </header>
 
       {/* =========================================================
-          2. MAIN WORKSPACE: FULL-BLEED MAP & FLOATING PANELS
+          2. MAIN WORKSPACE
           ========================================================= */}
-      <div className="map-workspace">
-        {/* Loading Overlay */}
+      <div className="friendly-workspace">
+        {/* Loading */}
         {loading && (
-          <div className="workspace-loading">
-            <div className="spinner" />
-            <span>Loading Quantitative Geo-Hazard & Degradation Model…</span>
+          <div className="friendly-loading-badge">
+            <div className="spinner-circle" />
+            <span>Loading pipeline satellite map and health data…</span>
           </div>
         )}
 
-        {/* Global Error Banner */}
-        {error && <div className="floating-error-banner">{error}</div>}
+        {/* Error */}
+        {error && <div className="friendly-error-badge">{error}</div>}
 
-        {/* Floating Left: Quick Stats & Filter Card */}
-        <div className="floating-stats-panel">
-          <div className="stats-card-header">
-            <span className="stats-card-title">CORRIDOR RISK OVERVIEW</span>
-            <button className="reset-btn" onClick={handleResetMap} title="Reset view and filters">
-              ↺ Reset
+        {/* GUIDED TOUR OVERLAY CARD */}
+        {tourIndex !== null && (
+          <div className="guided-tour-modal">
+            <div className="tour-header">
+              <span className="tour-step-count">
+                Step {tourIndex + 1} of {GUIDED_TOUR_STEPS.length}
+              </span>
+              <button className="tour-close-btn" onClick={() => setTourIndex(null)}>✕ Close</button>
+            </div>
+            <h3 className="tour-title">{GUIDED_TOUR_STEPS[tourIndex].title}</h3>
+            <p className="tour-text">{GUIDED_TOUR_STEPS[tourIndex].text}</p>
+            <div className="tour-actions">
+              {tourIndex > 0 && (
+                <button className="tour-nav-btn" onClick={handlePrevTourStep}>◀ Back</button>
+              )}
+              <button className="tour-nav-btn primary" onClick={handleNextTourStep}>
+                {tourIndex === GUIDED_TOUR_STEPS.length - 1 ? 'Finish Tour ✔' : 'Next Step ▶'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* FLOATING LEFT: HEALTH & FAST JUMP BAR */}
+        <div className="floating-health-card">
+          <div className="health-card-top">
+            <div>
+              <span className="health-label">Network Overall Health</span>
+              <div className="health-score-row">
+                <span className="health-number" style={{ color: healthStats.criticalCount > 0 ? '#f59e0b' : '#10b981' }}>
+                  {healthStats.healthPercent}%
+                </span>
+                <span className="health-rating-text">
+                  {healthStats.criticalCount === 0 ? '🟢 Excellent Condition' : '⚠️ Maintenance Required'}
+                </span>
+              </div>
+            </div>
+            <button className="reset-view-btn" onClick={handleResetMap} title="Reset map to full view">
+              ↺ Reset Map
             </button>
           </div>
 
-          <div className="stats-count-grid">
-            <button
-              className={`stat-box critical ${riskFilter === 'critical' ? 'selected' : ''}`}
-              onClick={() => setRiskFilter(riskFilter === 'critical' ? 'all' : 'critical')}
-            >
-              <span className="stat-count">{stats.Critical}</span>
-              <span className="stat-name">🚨 Critical KPs</span>
-            </button>
-            <button
-              className={`stat-box high ${riskFilter === 'high' ? 'selected' : ''}`}
-              onClick={() => setRiskFilter(riskFilter === 'high' ? 'all' : 'high')}
-            >
-              <span className="stat-count">{stats.High}</span>
-              <span className="stat-name">⚠️ High Risk</span>
-            </button>
-            <button
-              className={`stat-box medium ${riskFilter === 'medium' ? 'selected' : ''}`}
-              onClick={() => setRiskFilter(riskFilter === 'medium' ? 'all' : 'medium')}
-            >
-              <span className="stat-count">{stats.Medium}</span>
-              <span className="stat-name">Medium</span>
-            </button>
-            <button
-              className={`stat-box low ${riskFilter === 'low' ? 'selected' : ''}`}
-              onClick={() => setRiskFilter(riskFilter === 'low' ? 'all' : 'low')}
-            >
-              <span className="stat-count">{stats.Low}</span>
-              <span className="stat-name">🟢 Safe</span>
-            </button>
+          {/* Quick status boxes */}
+          <div className="status-pills-grid">
+            <div className="status-box safe">
+              <span className="sb-count">{healthStats.healthyCount}</span>
+              <span className="sb-name">🟢 Healthy KPs</span>
+            </div>
+            <div className="status-box attention">
+              <span className="sb-count">{healthStats.attentionCount}</span>
+              <span className="sb-name">🟡 Monitoring</span>
+            </div>
+            <div className="status-box danger">
+              <span className="sb-count">{healthStats.criticalCount}</span>
+              <span className="sb-name">🔴 Critical Action</span>
+            </div>
           </div>
 
-          {/* Quick Landmark Jump Chips */}
-          <div className="landmarks-quick-list">
-            <span className="quick-title">⚡ Key Strategic Hubs</span>
-            <div className="landmark-pills">
-              {LANDMARKS.map((lm) => (
-                <button
-                  key={lm.id}
-                  className="landmark-chip"
-                  onClick={() => handleLandmarkClick(lm)}
-                >
-                  {lm.icon} {lm.name.split(' ')[0]} {lm.name.split(' ')[1]}
+          {/* Strategic Hubs 1-Click Jump */}
+          <div className="strategic-hubs-section">
+            <span className="section-small-title">📍 Jump to Major Facility</span>
+            <div className="hub-chips-list">
+              {STRATEGIC_HUBS.map((hub) => (
+                <button key={hub.id} className="hub-chip-btn" onClick={() => handleSelectHub(hub)}>
+                  {hub.icon} {hub.shortName}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Geo-Hazard Layer Checkboxes */}
-          <div className="layer-toggles-bar">
-            <label className="toggle-label">
-              <input type="checkbox" checked={showFlood} onChange={(e) => setShowFlood(e.target.checked)} />
-              🌊 River Scour Zone
-            </label>
-            <label className="toggle-label">
-              <input type="checkbox" checked={showFault} onChange={(e) => setShowFault(e.target.checked)} />
-              🌋 Seismic Fault
-            </label>
-            <label className="toggle-label">
-              <input type="checkbox" checked={showLandmarks} onChange={(e) => setShowLandmarks(e.target.checked)} />
-              🏢 Plants
-            </label>
+          {/* Basemap switcher */}
+          <div className="map-style-selector">
+            <span className="section-small-title">🗺️ Map Satellite Style</span>
+            <div className="style-btn-group">
+              {(Object.keys(TILE_LAYERS) as LayerKey[]).map((key) => (
+                <button
+                  key={key}
+                  className={`style-btn ${activeLayer === key ? 'active' : ''}`}
+                  onClick={() => setActiveLayer(key)}
+                >
+                  {TILE_LAYERS[key].label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* =========================================================
-            MAP CONTAINER (Fast, accessible, 100% natural interaction)
-            ========================================================= */}
-        <div className="leaflet-map-wrapper">
+        {/* MAP CONTAINER */}
+        <div className="map-viewport-wrapper">
           <MapContainer
             center={mapCenter}
             zoom={mapZoom}
             maxZoom={20}
             scrollWheelZoom
             style={{ width: '100%', height: '100%' }}
-            className="full-bleed-map"
+            className="interactive-clean-map"
           >
             <MapUpdater center={mapCenter} zoom={mapZoom} mapRef={mapRef} />
             <TileLayer
@@ -446,84 +562,47 @@ function App() {
               maxZoom={currentTile.maxZoom}
             />
 
-            {/* 🌊 River Niger Flood Scour Corridor */}
-            {showFlood && (
-              <Polygon
-                positions={FLOOD_CORRIDOR}
-                pathOptions={{
-                  color: '#06b6d4',
-                  fillColor: '#0891b2',
-                  fillOpacity: 0.22,
-                  weight: 2,
-                  dashArray: '6, 8',
-                }}
-              >
-                <Tooltip sticky>
-                  🌊 <strong>River Niger Hydrodynamic Scour Zone</strong><br />
-                  High hydrodynamic drag and pipe un-seating risk
-                </Tooltip>
-              </Polygon>
-            )}
+            {/* Strategic Landmark Buildings */}
+            {STRATEGIC_HUBS.map((hub) => (
+              <Fragment key={hub.id}>
+                <Polygon
+                  positions={hub.poly}
+                  pathOptions={{
+                    color: hub.color,
+                    fillColor: hub.color,
+                    fillOpacity: 0.22,
+                    weight: 2,
+                    dashArray: '5, 5',
+                  }}
+                  eventHandlers={{ click: () => handleSelectHub(hub) }}
+                >
+                  <Tooltip sticky>
+                    <strong>{hub.icon} {hub.name}</strong><br />
+                    {hub.summary}
+                  </Tooltip>
+                </Polygon>
+                <Marker
+                  position={hub.coords}
+                  icon={landmarkIcon(hub.icon, hub.shortName)}
+                  eventHandlers={{ click: () => handleSelectHub(hub) }}
+                >
+                  <Popup className="friendly-popup">
+                    <div>
+                      <h3>{hub.icon} {hub.name}</h3>
+                      <p><strong>Type:</strong> {hub.type}</p>
+                      <p>{hub.summary}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              </Fragment>
+            ))}
 
-            {/* 🌋 Active Seismic Fault Trace */}
-            {showFault && (
-              <Polyline
-                positions={FAULT_TRACE}
-                pathOptions={{
-                  color: '#ef4444',
-                  weight: 4,
-                  dashArray: '12, 8',
-                }}
-              >
-                <Tooltip sticky>
-                  🌋 <strong>Lokoja–Koton Karfe Fault Fracture</strong><br />
-                  Active lateral tectonic shear line
-                </Tooltip>
-              </Polyline>
-            )}
-
-            {/* 🏢 Industrial Plant Building Footprints */}
-            {showLandmarks &&
-              LANDMARKS.map((lm) => (
-                <Fragment key={lm.id}>
-                  <Polygon
-                    positions={lm.poly}
-                    pathOptions={{
-                      color: lm.color,
-                      fillColor: lm.color,
-                      fillOpacity: 0.25,
-                      weight: 2,
-                      dashArray: '4, 6',
-                    }}
-                    eventHandlers={{ click: () => handleLandmarkClick(lm) }}
-                  >
-                    <Tooltip sticky>
-                      <strong>{lm.icon} {lm.name}</strong><br />
-                      {lm.type}
-                    </Tooltip>
-                  </Polygon>
-                  <Marker
-                    position={lm.coords}
-                    icon={landmarkIcon(lm.icon, lm.name.split(' ').slice(0, 2).join(' '), lm.color)}
-                    eventHandlers={{ click: () => handleLandmarkClick(lm) }}
-                  >
-                    <Popup className="station-popup">
-                      <div className="popup-body">
-                        <h3>{lm.icon} {lm.name}</h3>
-                        <p><strong>Type:</strong> {lm.type}</p>
-                        <p>{lm.desc}</p>
-                      </div>
-                    </Popup>
-                  </Marker>
-                </Fragment>
-              ))}
-
-            {/* ⚡ Metering Stations */}
+            {/* Metering Stations */}
             {stations.map((st) => (
               <Marker
                 key={st.id}
                 position={[st.coordinates[1], st.coordinates[0]]}
-                icon={stationIcon(st.name.replace('Metering Station', '').trim(), st.id === 'ST-01')}
+                icon={stationIcon(st.name.replace('Metering Station', '').trim())}
                 eventHandlers={{
                   click: () => {
                     setMapCenter([st.coordinates[1], st.coordinates[0]]);
@@ -531,17 +610,16 @@ function App() {
                   },
                 }}
               >
-                <Popup className="station-popup">
-                  <div className="popup-body">
+                <Popup className="friendly-popup">
+                  <div>
                     <h3>⚡ {st.name}</h3>
-                    <p><strong>Type:</strong> {st.type}</p>
-                    <p><strong>Capacity:</strong> {st.capacity_mmscfd} MMSCFD</p>
+                    <p><strong>Capacity:</strong> {st.capacity_mmscfd} Million Cubic Feet / Day</p>
                   </div>
                 </Popup>
               </Marker>
             ))}
 
-            {/* ── BOLD, LUMINOUS PIPELINE TRAJECTORIES ── */}
+            {/* Pipelines (Luminous, Bold, High-Contrast) */}
             {pipelines?.features.map((f: any, idx: number) => {
               const coords = f.geometry.coordinates as [number, number][];
               const props = f.properties as PipelineProperties;
@@ -552,7 +630,7 @@ function App() {
 
               return (
                 <Fragment key={`pl-${idx}`}>
-                  {/* High-visibility outer glow */}
+                  {/* Glowing Outline */}
                   <Polyline
                     positions={route}
                     pathOptions={{
@@ -563,8 +641,7 @@ function App() {
                       lineJoin: 'round',
                     }}
                   />
-
-                  {/* Main High-Contrast Pipeline Line */}
+                  {/* Bold Route Centerline */}
                   <Polyline
                     positions={route}
                     pathOptions={{
@@ -575,22 +652,19 @@ function App() {
                       lineJoin: 'round',
                     }}
                     eventHandlers={{
-                      click: () => {
-                        setSelectedPipelineId(pid);
-                      },
+                      click: () => setSelectedPipelineId(pid),
                     }}
                   >
                     <Tooltip sticky>
                       <strong>{theme.name}</strong><br />
-                      Diameter: {theme.diameter} | Steel: {theme.steel} | Pressure: {theme.pressure}<br />
-                      Click to isolate corridor
+                      {theme.purpose}
                     </Tooltip>
                   </Polyline>
                 </Fragment>
               );
             })}
 
-            {/* ── INTERACTIVE KP MARKERS ── */}
+            {/* Interactive KP Circle Markers */}
             {filteredKPs.map((kp) => {
               const isSelected = selectedKP?.kp === kp.kp && selectedKP?.pipeline_id === kp.pipeline_id;
               const color = RISK_COLORS[kp.risk_class];
@@ -603,18 +677,18 @@ function App() {
                   radius={radius}
                   pathOptions={{
                     fillColor: color,
-                    fillOpacity: isSelected ? 1.0 : 0.9,
-                    color: isSelected ? '#ffffff' : '#0f172a',
+                    fillOpacity: isSelected ? 1.0 : 0.85,
+                    color: isSelected ? '#ffffff' : '#000000',
                     weight: isSelected ? 3 : 1.5,
                   }}
                   eventHandlers={{
                     click: () => handleSelectKP(kp),
                   }}
                 >
-                  <Tooltip direction="top" offset={[0, -6]} opacity={0.95}>
-                    <strong>{kp.pipeline_code} — KP {kp.kp} km</strong><br />
-                    Risk: <span style={{ color }}>{kp.risk_class} ({kp.failure_probability_percent}%)</span><br />
-                    Cause: {kp.primary_hazard}
+                  <Tooltip direction="top" offset={[0, -6]}>
+                    <strong>KP {kp.kp} km ({kp.pipeline_code})</strong><br />
+                    Status: <span style={{ color, fontWeight: 700 }}>{kp.risk_class} Risk</span><br />
+                    {kp.primary_hazard}
                   </Tooltip>
                 </CircleMarker>
               );
@@ -623,193 +697,114 @@ function App() {
         </div>
 
         {/* =========================================================
-            3. FLOATING RIGHT: KP DEEP INSPECTION CARD (Sleek Drawer)
+            3. FLOATING RIGHT: FRIENDLY KP DETAIL CARD
             ========================================================= */}
-        {selectedKP && isInspectorOpen && (
-          <aside className="floating-inspector-drawer">
+        {selectedKP && (
+          <aside className="friendly-inspector-card">
             {/* Header */}
-            <div className="inspector-header">
-              <div className="header-left">
-                <span className="kp-large-badge">KP {selectedKP.kp} km</span>
-                <span className="route-sub-code">{selectedKP.pipeline_code}</span>
+            <div className="inspector-card-header">
+              <div className="kp-main-title">
+                <span className="kp-pill">KP {selectedKP.kp} km</span>
+                <span className="kp-route-name">{selectedKP.pipeline_code}</span>
               </div>
-              <div className="header-right">
-                <span className={`risk-badge-large ${selectedKP.risk_class.toLowerCase()}`}>
-                  {selectedKP.risk_class} Risk
-                </span>
-                <button
-                  className="close-drawer-btn"
-                  onClick={() => setIsInspectorOpen(false)}
-                  title="Minimize Inspector"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-
-            {/* Stepping Navigation Bar (Prev / Next KP) */}
-            <div className="kp-stepper-bar">
-              <button className="stepper-btn" onClick={handlePrevKP}>
-                ◀ Previous KP
-              </button>
-              <span className="stepper-current">
-                KP {selectedKP.kp} / 373 km
+              <span className={`risk-tag ${selectedKP.risk_class.toLowerCase()}`}>
+                {selectedKP.risk_class === 'Critical' ? '🔴 Urgent Action' :
+                 selectedKP.risk_class === 'High' ? '🟠 High Priority' :
+                 selectedKP.risk_class === 'Medium' ? '🟡 Moderate' : '🟢 Healthy'}
               </span>
-              <button className="stepper-btn" onClick={handleNextKP}>
-                Next KP ▶
-              </button>
             </div>
 
-            <div className="inspector-scrollable">
-              {/* Primary PoF Hero Box */}
-              <div className="pof-hero-card">
-                <div className="pof-metric-row">
-                  <div className="pof-metric">
-                    <span className="metric-label">Probability of Failure (PoF)</span>
-                    <span className="metric-value" style={{ color: RISK_COLORS[selectedKP.risk_class] }}>
-                      {selectedKP.failure_probability_percent}%
-                    </span>
-                  </div>
-                  <div className="pof-category-pill">
-                    {selectedKP.risk_class.toUpperCase()} THREAT
-                  </div>
-                </div>
-                <div className="pof-progress-track">
-                  <div
-                    className={`pof-progress-fill ${selectedKP.risk_class.toLowerCase()}`}
-                    style={{ width: `${selectedKP.failure_probability_percent}%` }}
-                  />
-                </div>
+            {/* Simple Health Gauge */}
+            <div className="health-gauge-box">
+              <div className="hg-row">
+                <span className="hg-label">Pipeline Section Risk Level</span>
+                <span className="hg-percent" style={{ color: RISK_COLORS[selectedKP.risk_class] }}>
+                  {selectedKP.failure_probability_percent}% Vulnerability
+                </span>
               </div>
-
-              {/* Primary Hazard Diagnosis Card */}
-              <div className="diagnosis-card">
-                <div className="diagnosis-title">
-                  <span className="danger-icon">⚠️</span>
-                  <h4>{selectedKP.primary_hazard}</h4>
-                </div>
-                <p className="diagnosis-body">{selectedKP.diagnostic_message}</p>
+              <div className="hg-track">
+                <div
+                  className={`hg-fill ${selectedKP.risk_class.toLowerCase()}`}
+                  style={{ width: `${selectedKP.failure_probability_percent}%` }}
+                />
               </div>
+            </div>
 
-              {/* Wall Thickness & Thinning Degradation */}
-              {selectedKP.remaining_wall_thickness_mm !== undefined && (
-                <div className="degradation-card">
-                  <div className="card-sub-header">
-                    <span>🛡️ Steel Wall Thickness & Corrosion</span>
-                    <span className={`condition-tag ${(selectedKP.degradation_condition || 'Normal').toLowerCase()}`}>
-                      {selectedKP.degradation_condition || 'Normal'}
-                    </span>
-                  </div>
-                  <div className="wall-metrics-row">
-                    <div className="wall-metric">
-                      <span className="wm-label">Remaining Wall</span>
-                      <span className="wm-value">{selectedKP.remaining_wall_thickness_mm} mm</span>
-                      <span className="wm-sub">of {selectedKP.design_wall_thickness_mm} mm design</span>
-                    </div>
-                    <div className="wall-metric">
-                      <span className="wm-label">Wall Thinning Loss</span>
-                      <span className="wm-value loss">-{selectedKP.thickness_loss_mm} mm</span>
-                      <span className="wm-sub">({selectedKP.material_loss_percent}% loss)</span>
-                    </div>
-                  </div>
-                </div>
-              )}
+            {/* Plain English Hazard Explanation */}
+            <div className="friendly-hazard-box">
+              <div className="fh-title">
+                <span>⚠️ What is Happening Here:</span>
+              </div>
+              <p className="fh-desc">{selectedKP.diagnostic_message}</p>
+            </div>
 
-              {/* 6 Quantitative Determinant Factors */}
-              <div className="determinants-card">
-                <div className="card-sub-header">
-                  <span>📊 6 Quantitative Determinant Scores</span>
-                  <span className="score-desc">0.0 (Safe) → 1.0 (Critical)</span>
-                </div>
-                <div className="det-bars-list">
+            {/* Plain English Action Plan */}
+            <div className="friendly-action-box">
+              <div className="fa-title">
+                <span>🔧 What Needs To Be Done:</span>
+              </div>
+              <p className="fa-desc">{selectedKP.remediation_plan}</p>
+            </div>
+
+            {/* Pipe Physical Specs (Simple) */}
+            <div className="simple-specs-grid">
+              <div className="spec-card">
+                <span className="spec-label">Steel Remaining</span>
+                <span className="spec-val">
+                  {selectedKP.remaining_wall_thickness_mm ?? 18.2} mm
+                </span>
+                <span className="spec-sub">({selectedKP.degradation_condition || 'Good'} condition)</span>
+              </div>
+              <div className="spec-card">
+                <span className="spec-label">Elevation & Ground</span>
+                <span className="spec-val">{selectedKP.elevation} m</span>
+                <span className="spec-sub">{selectedKP.soil_type}</span>
+              </div>
+            </div>
+
+            {/* ADVANCED ENGINEERING VIEW (Expandable if toggled) */}
+            {viewMode === 'advanced' && (
+              <div className="advanced-determinants-box">
+                <span className="adv-title">📊 6 Quantitative Determinant Scores</span>
+                <div className="adv-list">
                   {[
-                    { label: '🌊 Flood & Scour Index', val: selectedKP.flooding_index, color: '#06b6d4' },
-                    { label: '🌋 Seismic Shearing Factor', val: selectedKP.earthquake_factor, color: '#ef4444' },
-                    { label: '🌧️ Rainfall Runoff Erosion', val: selectedKP.erosion_factor, color: '#3b82f6' },
-                    { label: '🏔️ Landslide Slope Risk', val: selectedKP.landslide_index, color: '#f59e0b' },
-                    { label: '🧪 Soil & Water Corrosivity', val: selectedKP.soil_corrosivity_index, color: '#a855f7' },
-                    { label: '⚙️ Operational Hoop Stress', val: selectedKP.hoop_stress_ratio, color: '#eab308' },
-                  ].map((det) => (
-                    <div className="det-bar-row" key={det.label}>
-                      <div className="det-row-header">
-                        <span className="det-label">{det.label}</span>
-                        <span className="det-number">{(det.val ?? 0).toFixed(2)}</span>
+                    { name: '🌊 Flooding & Scour', val: selectedKP.flooding_index, col: '#06b6d4' },
+                    { name: '🌋 Seismic Shearing', val: selectedKP.earthquake_factor, col: '#ef4444' },
+                    { name: '🌧️ Rain Erosion', val: selectedKP.erosion_factor, col: '#3b82f6' },
+                    { name: '🏔️ Landslide Slope', val: selectedKP.landslide_index, col: '#f59e0b' },
+                    { name: '🧪 Soil Corrosivity', val: selectedKP.soil_corrosivity_index, col: '#a855f7' },
+                    { name: '⚙️ Operating Hoop Stress', val: selectedKP.hoop_stress_ratio, col: '#eab308' },
+                  ].map((d) => (
+                    <div key={d.name} className="adv-item">
+                      <div className="adv-item-row">
+                        <span>{d.name}</span>
+                        <strong>{(d.val ?? 0).toFixed(2)}</strong>
                       </div>
-                      <div className="det-track">
-                        <div
-                          className="det-fill"
-                          style={{ width: `${(det.val ?? 0) * 100}%`, background: det.color }}
-                        />
+                      <div className="adv-track">
+                        <div className="adv-fill" style={{ width: `${(d.val ?? 0) * 100}%`, background: d.col }} />
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* Physical Ground Parameters Grid */}
-              <div className="ground-params-grid">
-                <div className="gp-item">
-                  <span className="gp-label">Elevation</span>
-                  <span className="gp-val">{selectedKP.elevation} m</span>
-                </div>
-                <div className="gp-item">
-                  <span className="gp-label">Terrain Slope</span>
-                  <span className="gp-val">{selectedKP.slope_deg}°</span>
-                </div>
-                <div className="gp-item">
-                  <span className="gp-label">River Proximity</span>
-                  <span className="gp-val">{selectedKP.river_proximity_km} km</span>
-                </div>
-                <div className="gp-item">
-                  <span className="gp-label">Fault Distance</span>
-                  <span className="gp-val">{selectedKP.fault_distance_km} km</span>
-                </div>
-                <div className="gp-item">
-                  <span className="gp-label">Soil Lithology</span>
-                  <span className="gp-val">{selectedKP.soil_type}</span>
-                </div>
-                <div className="gp-item">
-                  <span className="gp-label">Pipe Spec</span>
-                  <span className="gp-val">{selectedKP.pipe_diameter_inches}" {selectedKP.pipe_material}</span>
-                </div>
-              </div>
-
-              {/* Actionable Engineering Remediation Plan */}
-              <div className="remediation-card">
-                <div className="remediation-title">
-                  <span>🔧 Actionable Engineering Remediation Directive</span>
-                </div>
-                <p className="remediation-body">{selectedKP.remediation_plan}</p>
-              </div>
-            </div>
+            )}
           </aside>
         )}
 
-        {/* If drawer is closed, show a floating button to reopen */}
-        {selectedKP && !isInspectorOpen && (
-          <button className="reopen-inspector-btn" onClick={() => setIsInspectorOpen(true)}>
-            📊 Inspect KP {selectedKP.kp} km ({selectedKP.risk_class})
-          </button>
-        )}
-
         {/* =========================================================
-            4. FLOATING BOTTOM: CRITICAL ALERTS TICKER BAR
+            4. FLOATING BOTTOM: CRITICAL HOTSPOTS TICKER
             ========================================================= */}
-        <div className="floating-bottom-alerts">
-          <div className="alerts-title">
-            <span className="blink-icon">🚨</span>
-            CRITICAL HOTSPOTS:
-          </div>
-          <div className="alerts-chips-scroll">
-            {criticalHotspots.map((kp) => (
+        <div className="friendly-hotspots-bar">
+          <span className="hotspot-badge">🚨 CRITICAL HOTSPOTS:</span>
+          <div className="hotspot-chips-container">
+            {topCriticalList.map((kp) => (
               <button
                 key={`${kp.pipeline_id}-${kp.kp}`}
-                className={`alert-chip ${selectedKP?.kp === kp.kp && selectedKP?.pipeline_id === kp.pipeline_id ? 'active' : ''}`}
+                className={`hotspot-chip ${selectedKP?.kp === kp.kp && selectedKP?.pipeline_id === kp.pipeline_id ? 'active' : ''}`}
                 onClick={() => handleSelectKP(kp)}
               >
-                <strong>{kp.pipeline_code} KP {kp.kp} km</strong>
-                <span className="chip-pof">{kp.failure_probability_percent}% PoF</span>
-                <span className="chip-cause">({kp.primary_hazard.split(' ')[0]})</span>
+                📍 <strong>{kp.pipeline_code} KP {kp.kp} km</strong>
+                <span className="hotspot-pill">{kp.failure_probability_percent}% Risk</span>
               </button>
             ))}
           </div>
