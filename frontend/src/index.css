@@ -726,37 +726,64 @@ body {
 }
 
 .layer-btn {
-  padding: 10px 16px;
+  padding: 8px 16px;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.02em;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  color: var(--text-secondary);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
-.pipeline-halo {
-  filter: blur(1px);
-}
-
-.pipeline-core {
-  filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.7));
-}
-
-.pipeline-core.selected {
-  filter: drop-shadow(0 0 18px rgba(248, 113, 113, 0.9));
-}
-
-.pipeline-highlight {
-  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.85));
-}
-
-.leaflet-container {
-  background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 24%),
-    radial-gradient(circle at bottom right, rgba(239, 68, 68, 0.08), transparent 18%),
-    #0b1220;
+.layer-btn:hover {
+  background: rgba(30, 41, 59, 0.95);
+  color: #ffffff;
 }
 
 .layer-btn.active {
   color: #eff6ff;
-  background: rgba(99, 102, 241, 0.22);
+  background: #3b82f6;
+  border-color: #60a5fa;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+}
+
+/* Realistic Pipeline Corridor Styles */
+.pipeline-row {
+  filter: blur(0.5px);
+}
+
+.pipeline-steel {
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));
+  cursor: pointer;
+}
+
+.pipeline-steel.selected {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 18px rgba(239, 68, 68, 0.8));
+}
+
+.pipeline-stripe {
+  pointer-events: none;
+}
+
+.accessible-map-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #0b1220;
+  cursor: grab;
+}
+
+.leaflet-container:active {
+  cursor: grabbing;
 }
 
 .map-legend {
