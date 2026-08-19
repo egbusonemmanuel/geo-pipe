@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState, useCallback, useRef, type MutableRefObject } from 'react';
+import { Fragment, useEffect, useMemo, useState, useRef, type MutableRefObject } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -6,6 +6,8 @@ import {
   Marker,
   Popup,
   Polyline,
+  Polygon,
+  Tooltip,
   useMap,
 } from 'react-leaflet';
 import L, { type LatLngExpression, type Map as LeafletMap } from 'leaflet';
@@ -33,25 +35,186 @@ const RISK_COLORS: Record<RiskLevel, string> = {
   Critical: '#ef4444',
 };
 
-// Map Tile Layers
+// High-Resolution Tile Layers (Vivid Satellite & Buildings)
 const TILE_LAYERS = {
-  dark: {
-    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-  },
   satellite: {
+    label: '🛰 Vivid Google Satellite Hybrid',
+    url: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+    attribution: '&copy; Google Maps / Maxar High-Res Satellite',
+    maxZoom: 20,
+    maxNativeZoom: 19,
+  },
+  esri_streets: {
+    label: '🏢 High-Res Buildings & Infrastructure',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    attribution: '&copy; Esri, Maxar, Earthstar Geographics',
+    attribution: '&copy; Esri, Maxar, Earthstar Geographics, CNES/Airbus',
+    maxZoom: 19,
+    maxNativeZoom: 18,
+  },
+  dark: {
+    label: '🌑 Dark Tactical GIS',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    maxZoom: 19,
+    maxNativeZoom: 18,
   },
   terrain: {
+    label: '🏔 3D Topographic Terrain',
     url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-    attribution:
-      'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | &copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
+    attribution: '&copy; OpenStreetMap | &copy; OpenTopoMap',
+    maxZoom: 17,
+    maxNativeZoom: 16,
   },
 };
 
 type LayerKey = keyof typeof TILE_LAYERS;
+
+// 3D Industrial Complex and Building Landmarks along the Pipeline Corridors
+const INDUSTRIAL_BUILDINGS = [
+  {
+    id: 'FAC-01',
+    name: 'Ajaokuta Steel Plant & Central Gas Terminal Hub',
+    type: 'Steel & Gas Terminal Mega-Complex',
+    coordinates: [7.5564, 6.6552] as [number, number], // [lat, lon]
+    polygon: [
+      [7.5420, 6.6420],
+      [7.5420, 6.6720],
+      [7.5720, 6.6720],
+      [7.5720, 6.6420],
+    ] as [number, number][],
+    description: 'Main Blast Furnace units, Rolling Mills, Thermal Captive Power Plant, and Terminal Gas Injection Station.',
+    buildingsCount: 38,
+    status: 'Operational Injection Hub',
+    icon: '🏭',
+    color: '#06b6d4',
+  },
+  {
+    id: 'FAC-02',
+    name: 'Geregu I & II Thermal Power Generating Station',
+    type: 'Thermal Gas Power Station (884 MW)',
+    coordinates: [7.4716, 6.6603] as [number, number],
+    polygon: [
+      [7.4620, 6.6520],
+      [7.4620, 6.6700],
+      [7.4810, 6.6700],
+      [7.4810, 6.6520],
+    ] as [number, number][],
+    description: 'Phase I (414 MW) and Phase II (470 MW) Siemens Gas Turbines, 330kV Switchyard, and Metering Substation.',
+    buildingsCount: 16,
+    status: 'Active Generation',
+    icon: '⚡',
+    color: '#f59e0b',
+  },
+  {
+    id: 'FAC-03',
+    name: 'Obajana Cement Mega-Plant Complex',
+    type: 'Cement Pyroprocessing & Clinker Works (13.25 MTPA)',
+    coordinates: [7.9150, 6.4350] as [number, number],
+    polygon: [
+      [7.9020, 6.4220],
+      [7.9020, 6.4520],
+      [7.9280, 6.4520],
+      [7.9280, 6.4220],
+    ] as [number, number][],
+    description: '4 Rotary Kiln Lines, Clinker Silos, 135 MW Captive Gas Power Plant, Limestone Quarry Conveyors.',
+    buildingsCount: 52,
+    status: 'Continuous Industrial Supply',
+    icon: '🏗️',
+    color: '#ec4899',
+  },
+  {
+    id: 'FAC-04',
+    name: 'Lokoja Inland Port & Confluence Operations Complex',
+    type: 'Maritime River Logistics & Confluence Hub',
+    coordinates: [7.7300, 6.7400] as [number, number],
+    polygon: [
+      [7.7180, 6.7280],
+      [7.7180, 6.7520],
+      [7.7420, 6.7520],
+      [7.7420, 6.7280],
+    ] as [number, number][],
+    description: 'River Niger dockyards, administrative headquarters, fuel jetties, and confluence crossing monitor station.',
+    buildingsCount: 22,
+    status: 'Active Port Base',
+    icon: '🚢',
+    color: '#3b82f6',
+  },
+  {
+    id: 'FAC-05',
+    name: 'Jamata River Niger HDD Crossing Rig Site',
+    type: 'Sub-River Directional Drilling Installation',
+    coordinates: [7.8500, 6.8900] as [number, number],
+    polygon: [
+      [7.8380, 6.8800],
+      [7.8380, 6.9020],
+      [7.8620, 6.9020],
+      [7.8620, 6.8800],
+    ] as [number, number][],
+    description: 'Heavy Horizontal Directional Drilling (HDD) entry/exit launch pads, articulated concrete mat anchoring.',
+    buildingsCount: 8,
+    status: 'Submerged Cross-River Node',
+    icon: '🌊',
+    color: '#06b6d4',
+  },
+  {
+    id: 'FAC-06',
+    name: 'Ahoko Block Valve Station (AKK KP 72)',
+    type: 'Automated Isolation Valve & Flare Station',
+    coordinates: [8.1200, 7.1500] as [number, number],
+    polygon: [
+      [8.1100, 7.1400],
+      [8.1100, 7.1620],
+      [8.1300, 7.1620],
+      [8.1300, 7.1400],
+    ] as [number, number][],
+    description: 'Mainline automated shutdown valves, flare knockout drum, cathodic protection test station.',
+    buildingsCount: 6,
+    status: 'Mainline Safety Node',
+    icon: '🛑',
+    color: '#ef4444',
+  },
+];
+
+// Physical Geo-Hazard Spatial Corridors
+const FLOOD_SCOUR_CORRIDOR: [number, number][] = [
+  [7.5200, 6.6400],
+  [7.5700, 6.6700],
+  [7.6200, 6.7000],
+  [7.7100, 6.7600],
+  [7.8200, 6.8700],
+  [7.9000, 6.9200],
+  [7.9200, 6.8800],
+  [7.8000, 6.8200],
+  [7.6800, 6.7200],
+  [7.5900, 6.6600],
+  [7.5000, 6.6200],
+];
+
+const SEISMIC_FAULT_TRACE: [number, number][] = [
+  [7.3500, 6.4500],
+  [7.5800, 6.6200],
+  [7.7800, 6.8200],
+  [8.0500, 7.0500],
+  [8.2500, 7.2200],
+];
+
+// Custom Facility Marker Icon
+const facilityIcon = (icon: string, name: string, type: string) =>
+  L.divIcon({
+    className: 'custom-facility-icon',
+    html: `
+      <div class="facility-marker">
+        <div class="facility-pulse"></div>
+        <div class="facility-badge">${icon}</div>
+        <div class="facility-label-card">
+          <span class="facility-title">${name}</span>
+          <span class="facility-sub">${type}</span>
+        </div>
+      </div>
+    `,
+    iconSize: [44, 44],
+    iconAnchor: [22, 22],
+  });
 
 // Custom Station Marker Icon
 const stationIcon = (name: string, isMain: boolean) =>
@@ -92,7 +255,8 @@ function App() {
   const [selectedPipelineId, setSelectedPipelineId] = useState<number | null>(null);
   const [selectedKP, setSelectedKP] = useState<KPFeature | null>(null);
   const [selectedStation, setSelectedStation] = useState<MeteringStation | null>(null);
-  const [activeLayer, setActiveLayer] = useState<LayerKey>('dark');
+  const [selectedFacility, setSelectedFacility] = useState<any | null>(null);
+  const [activeLayer, setActiveLayer] = useState<LayerKey>('satellite');
   const [riskFilter, setRiskFilter] = useState<string>('all');
   const [hazardFilter, setHazardFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
@@ -100,6 +264,12 @@ function App() {
   const [show3D, setShow3D] = useState<boolean>(true);
   const [tiltPitch, setTiltPitch] = useState<number>(28);
   const [threeDIntensity, setThreeDIntensity] = useState<number>(18);
+  
+  // Layer Overlay Toggles
+  const [showBuildings, setShowBuildings] = useState<boolean>(true);
+  const [showFloodZone, setShowFloodZone] = useState<boolean>(true);
+  const [showFaultLine, setShowFaultLine] = useState<boolean>(true);
+
   const mapRef = useRef<LeafletMap | null>(null);
 
   const selectedPipeline = useMemo(() => {
@@ -110,9 +280,9 @@ function App() {
     );
   }, [pipelines, selectedPipelineId]);
 
-  // Map view center state (default centered on Ajaokuta / Kogi State)
+  // Default centered on Ajaokuta / Kogi State
   const [mapCenter, setMapCenter] = useState<[number, number]>([7.62, 6.70]);
-  const [mapZoom, setMapZoom] = useState<number>(10);
+  const [mapZoom, setMapZoom] = useState<number>(11);
 
   // Fetch initial data
   useEffect(() => {
@@ -137,7 +307,6 @@ function App() {
         setStations(stationsData);
         setKpFeatures(kpData);
 
-        // Auto select first critical or high risk KP as default inspection
         const highRiskKP = kpData.find((kp) => kp.risk_class === 'Critical') || kpData[0];
         if (highRiskKP) {
           setSelectedKP(highRiskKP);
@@ -151,7 +320,7 @@ function App() {
     loadData();
   }, []);
 
-  // Keyboard navigation for accessibility: arrows to pan, +/- to zoom
+  // Keyboard navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const map = mapRef.current;
@@ -167,7 +336,6 @@ function App() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  // Simple helpers to approximate meter offsets in degrees
   const metersToDegLat = (m: number) => m / 111320;
   const metersToDegLon = (m: number, lat: number) => m / (111320 * Math.cos((lat * Math.PI) / 180));
 
@@ -176,7 +344,6 @@ function App() {
     const out: [number, number][] = [];
     for (let i = 0; i < coords.length; i++) {
       const [lon, lat] = coords[i];
-      // Isometric upward vertical displacement in degrees for 3D elevation floating effect
       const dlat = metersToDegLat(offsetMeters * 35.0);
       const dlon = metersToDegLon(offsetMeters * 18.0, lat);
       out.push([lat + dlat, lon + dlon]);
@@ -184,7 +351,6 @@ function App() {
     return out;
   }
 
-  // Filtered KP features
   const filteredKPs = useMemo(() => {
     return kpFeatures.filter((kp) => {
       if (selectedPipelineId !== null && kp.pipeline_id !== selectedPipelineId) return false;
@@ -194,7 +360,6 @@ function App() {
     });
   }, [kpFeatures, selectedPipelineId, riskFilter, hazardFilter]);
 
-  // Overall Statistics
   const stats = useMemo(() => {
     const counts = { Critical: 0, High: 0, Medium: 0, Low: 0 };
     let totalPoF = 0;
@@ -210,49 +375,45 @@ function App() {
     return { ...counts, total, avgPoF };
   }, [filteredKPs]);
 
-  // Handle station click -> center map
   const handleStationClick = (st: MeteringStation) => {
     setSelectedStation(st);
     setMapCenter([st.coordinates[1], st.coordinates[0]]);
-    setMapZoom(12);
+    setMapZoom(14);
   };
 
-  // Handle KP post click
+  const handleFacilityClick = (fac: any) => {
+    setSelectedFacility(fac);
+    setMapCenter(fac.coordinates);
+    setMapZoom(15);
+  };
+
   const handleKPClick = (kp: KPFeature) => {
     setSelectedKP(kp);
     setMapCenter([kp.latitude, kp.longitude]);
-    setMapZoom(12);
+    setMapZoom(14);
   };
 
   const panAmount = 80;
 
   const handlePan = (deltaX: number, deltaY: number) => {
     const map = mapRef.current;
-    if (map) {
-      map.panBy([deltaX, deltaY]);
-    }
+    if (map) map.panBy([deltaX, deltaY]);
   };
 
   const handleResetView = () => {
     setMapCenter([7.62, 6.7]);
-    setMapZoom(10);
+    setMapZoom(11);
   };
 
   const handleZoomIn = () => {
     const map = mapRef.current;
-    if (map) {
-      map.zoomIn();
-      return;
-    }
-    setMapZoom((prev) => Math.min(prev + 1, 18));
+    if (map) { map.zoomIn(); return; }
+    setMapZoom((prev) => Math.min(prev + 1, 19));
   };
 
   const handleZoomOut = () => {
     const map = mapRef.current;
-    if (map) {
-      map.zoomOut();
-      return;
-    }
+    if (map) { map.zoomOut(); return; }
     setMapZoom((prev) => Math.max(prev - 1, 3));
   };
 
@@ -262,31 +423,30 @@ function App() {
     <div className="app-shell">
       {/* ==================== SIDEBAR ==================== */}
       <aside className="sidebar">
-        {/* Header */}
         <div className="sidebar-header">
           <div className="brand">
             <div className="brand-icon">🔥</div>
             <div>
               <h1>Pipe.AI</h1>
-              <span className="badge-live">Quantitative Geo-Hazard Engine</span>
+              <span className="badge-live">3D GIS Industrial Twin</span>
             </div>
           </div>
           <p className="subtitle">
-            Kogi Pipelines Failure Probability & 6 Geo-Hazard Determinants Inspector
+            Kogi Pipelines Failure Probability, Corrosion & 6 Geo-Hazard Determinants Engine
           </p>
         </div>
 
-        {/* Quick Station Selector Bar */}
+        {/* 3D Industrial Complex & Metering Hubs Bar */}
         <div className="station-quick-bar">
-          <div className="bar-title">Metering Stations & Terminals</div>
+          <div className="bar-title">🏢 Key Industrial Complexes & Plants</div>
           <div className="station-chips">
-            {stations.map((st) => (
+            {INDUSTRIAL_BUILDINGS.map((fac) => (
               <button
-                key={st.id}
-                className={`chip-btn ${selectedStation?.id === st.id ? 'active' : ''}`}
-                onClick={() => handleStationClick(st)}
+                key={fac.id}
+                className={`chip-btn ${selectedFacility?.id === fac.id ? 'active' : ''}`}
+                onClick={() => handleFacilityClick(fac)}
               >
-                📍 {st.name.split('(')[0].replace('Metering Station', 'MS').replace('Power & Gas', '')}
+                {fac.icon} {fac.name.split(' ')[0]} {fac.name.split(' ')[1]}
               </button>
             ))}
           </div>
@@ -314,7 +474,7 @@ function App() {
           </div>
         )}
 
-        {/* Filters bar */}
+        {/* Filters panel */}
         <div className="filter-panel">
           <div className="filter-group">
             <label>Filter Route</label>
@@ -465,7 +625,7 @@ function App() {
           </div>
         )}
 
-        {/* Error notification */}
+        {/* Error banner */}
         {error && <div className="error-banner">{error}</div>}
 
         {/* Detailed KP Failure Inspector Card */}
@@ -497,11 +657,10 @@ function App() {
               </div>
             </div>
 
-            {/* 6 QUANTITATIVE GEO-HAZARD DETERMINANTS SCORE BREAKDOWN */}
+            {/* 6 Quantitative Geo-Hazard Determinants */}
             <div className="determinants-section">
               <div className="determinants-title">📊 6 Quantitative Determinant Factors</div>
               <div className="det-list">
-                {/* 1. Flooding */}
                 <div className="det-item">
                   <div className="det-header">
                     <span className="det-name">🌊 Flooding & River Scour Index</span>
@@ -512,7 +671,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* 2. Earthquake */}
                 <div className="det-item">
                   <div className="det-header">
                     <span className="det-name">🌋 Earthquake & Seismic Factor</span>
@@ -523,7 +681,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* 3. Severe Erosion */}
                 <div className="det-item">
                   <div className="det-header">
                     <span className="det-name">🌧️ Severe Rainfall Erosion Factor</span>
@@ -534,7 +691,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* 4. Landslide */}
                 <div className="det-item">
                   <div className="det-header">
                     <span className="det-name">🏔️ Landslide & Slope Instability</span>
@@ -545,7 +701,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* 5. Corrosive Soil */}
                 <div className="det-item">
                   <div className="det-header">
                     <span className="det-name">🧪 Corrosive Soil & Groundwater</span>
@@ -556,7 +711,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* 6. Operating Stress */}
                 <div className="det-item">
                   <div className="det-header">
                     <span className="det-name">⚙️ Hoop Stress Ratio (SMYS)</span>
@@ -651,7 +805,7 @@ function App() {
         ) : (
           <div className="empty-state">
             <div className="icon">📍</div>
-            <p>Click any KP post marker on the map or select from the list below to run diagnostic inspection.</p>
+            <p>Click any KP post marker or industrial complex on the map to run diagnostic inspection.</p>
           </div>
         )}
 
@@ -706,11 +860,47 @@ function App() {
               className={`layer-btn ${activeLayer === key ? 'active' : ''}`}
               onClick={() => setActiveLayer(key)}
             >
-              {key === 'dark' ? '🌑 Dark GIS' : key === 'satellite' ? '🛰 Satellite' : '🏔 Terrain'}
+              {key === 'satellite'
+                ? '🛰 Vivid Satellite HD'
+                : key === 'esri_streets'
+                ? '🏢 Buildings & Infra'
+                : key === 'dark'
+                ? '🌑 Dark Tactical'
+                : '🏔 3D Terrain'}
             </button>
           ))}
         </div>
 
+        {/* Floating Hazard & Building Overlays Panel */}
+        <div className="map-hazard-toggles">
+          <div className="toggle-header">🗺 Spatial GIS Overlays</div>
+          <label className="hazard-toggle-item">
+            <input
+              type="checkbox"
+              checked={showBuildings}
+              onChange={(e) => setShowBuildings(e.target.checked)}
+            />
+            🏢 3D Facilities & Buildings
+          </label>
+          <label className="hazard-toggle-item">
+            <input
+              type="checkbox"
+              checked={showFloodZone}
+              onChange={(e) => setShowFloodZone(e.target.checked)}
+            />
+            🌊 River Niger Scour Zone
+          </label>
+          <label className="hazard-toggle-item">
+            <input
+              type="checkbox"
+              checked={showFaultLine}
+              onChange={(e) => setShowFaultLine(e.target.checked)}
+            />
+            🌋 Active Seismic Fault Trace
+          </label>
+        </div>
+
+        {/* Navigation Controls */}
         <div className="map-control-panel" aria-label="Map navigation controls">
           <div className="map-control-row">
             <button type="button" className="control-btn" onClick={() => handlePan(0, -panAmount)} aria-label="Pan map up">↑</button>
@@ -756,6 +946,7 @@ function App() {
             <MapContainer
               center={mapCenter}
               zoom={mapZoom}
+              maxZoom={20}
               scrollWheelZoom
               style={{ width: '100%', height: '100%' }}
               className="accessible-map"
@@ -765,7 +956,89 @@ function App() {
                 key={activeLayer}
                 attribution={currentTile.attribution}
                 url={currentTile.url}
+                maxZoom={currentTile.maxZoom}
               />
+
+              {/* 🌊 River Niger Flood Scour Inundation Zone */}
+              {showFloodZone && (
+                <Polygon
+                  positions={FLOOD_SCOUR_CORRIDOR}
+                  pathOptions={{
+                    color: '#06b6d4',
+                    fillColor: '#0891b2',
+                    fillOpacity: 0.22,
+                    weight: 2,
+                    dashArray: '8, 10',
+                    className: 'flood-scour-poly',
+                  }}
+                >
+                  <Tooltip sticky>
+                    🌊 <strong>River Niger Hydrodynamic Scour Corridor</strong><br />
+                    High bed erosion and pipe un-seating risk zone
+                  </Tooltip>
+                </Polygon>
+              )}
+
+              {/* 🌋 Active Lokoja Seismic Fault Fracture Line */}
+              {showFaultLine && (
+                <Polyline
+                  positions={SEISMIC_FAULT_TRACE}
+                  pathOptions={{
+                    color: '#ef4444',
+                    weight: 4,
+                    dashArray: '12, 10',
+                    className: 'fault-fracture-line',
+                  }}
+                >
+                  <Tooltip sticky>
+                    🌋 <strong>Active Lokoja–Koton Karfe Fault Trace</strong><br />
+                    Lateral shear ground motion hazard
+                  </Tooltip>
+                </Polyline>
+              )}
+
+              {/* 🏢 Industrial Plant Building Complexes & 3D Footprints */}
+              {showBuildings &&
+                INDUSTRIAL_BUILDINGS.map((fac) => (
+                  <Fragment key={fac.id}>
+                    <Polygon
+                      positions={fac.polygon}
+                      pathOptions={{
+                        color: fac.color,
+                        fillColor: fac.color,
+                        fillOpacity: 0.28,
+                        weight: 2.5,
+                        className: 'building-complex-poly',
+                      }}
+                      eventHandlers={{
+                        click: () => handleFacilityClick(fac),
+                      }}
+                    >
+                      <Tooltip sticky>
+                        <strong>{fac.icon} {fac.name}</strong><br />
+                        {fac.type} ({fac.buildingsCount} Industrial Units)
+                      </Tooltip>
+                    </Polygon>
+
+                    <Marker
+                      position={fac.coordinates}
+                      icon={facilityIcon(fac.icon, fac.name.split(' ')[0] + ' ' + (fac.name.split(' ')[1] || ''), fac.type.split('(')[0])}
+                      eventHandlers={{
+                        click: () => handleFacilityClick(fac),
+                      }}
+                    >
+                      <Popup className="station-popup">
+                        <div>
+                          <h3>{fac.icon} {fac.name}</h3>
+                          <p><strong>Type:</strong> {fac.type}</p>
+                          <p><strong>Status:</strong> {fac.status}</p>
+                          <p><strong>Facilities:</strong> {fac.buildingsCount} Building & Turbine Structures</p>
+                          <p>{fac.description}</p>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  </Fragment>
+                ))}
 
               {/* Holographic 3D pipeline rendering with glow and flow accents */}
               {pipelines?.features.map((f: any, idx: number) => {
@@ -783,7 +1056,6 @@ function App() {
                   <Fragment key={`pl-${idx}`}>
                     {show3D && (
                       <>
-                        {/* Ground Shadow Layer */}
                         <Polyline
                           positions={shadow}
                           pathOptions={{
@@ -795,7 +1067,6 @@ function App() {
                             className: 'pipeline-shadow',
                           }}
                         />
-                        {/* 3D Volumetric Bloom Halo */}
                         <Polyline
                           positions={elevated}
                           pathOptions={{
@@ -809,7 +1080,6 @@ function App() {
                         />
                       </>
                     )}
-                    {/* Elevated 3D Pipe Core Line */}
                     <Polyline
                       positions={show3D ? elevated : route}
                       pathOptions={{
@@ -821,7 +1091,6 @@ function App() {
                         className: `pipeline-core ${isSelected ? 'selected' : ''}`,
                       }}
                     />
-                    {/* Top Laser Flow Ribbon */}
                     <Polyline
                       positions={show3D ? highlight : route}
                       pathOptions={{

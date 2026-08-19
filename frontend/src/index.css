@@ -1043,3 +1043,150 @@ body {
   color: var(--text-muted);
 }
 
+/* Facility & 3D Building Complex Styles */
+.custom-facility-icon {
+  background: transparent;
+  border: none;
+}
+
+.facility-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.facility-pulse {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(56, 189, 248, 0.7);
+  animation: facilityRing 2.5s infinite ease-out;
+}
+
+@keyframes facilityRing {
+  0% { transform: translateX(-50%) scale(0.8); opacity: 1; }
+  100% { transform: translateX(-50%) scale(2.2); opacity: 0; }
+}
+
+.facility-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.8), 0 4px 12px rgba(0, 0, 0, 0.6);
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.facility-marker:hover .facility-badge {
+  transform: scale(1.15);
+}
+
+.facility-label-card {
+  margin-top: 6px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 4px 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+}
+
+.facility-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.facility-sub {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #38bdf8;
+}
+
+/* Floating Hazard & Building Overlay Controls */
+.map-hazard-toggles {
+  position: absolute;
+  top: 72px;
+  right: 16px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 8px 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.toggle-header {
+  font-size: 0.64rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+
+.hazard-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 3px 0;
+}
+
+.hazard-toggle-item input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+/* Building & Hazard Polygon Glows */
+.building-complex-poly {
+  stroke-dasharray: 6, 8;
+  animation: buildingGlow 3s linear infinite;
+}
+
+@keyframes buildingGlow {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -28; }
+}
+
+.flood-scour-poly {
+  filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.5));
+}
+
+.fault-fracture-line {
+  filter: drop-shadow(0 0 14px rgba(239, 68, 68, 0.9));
+  animation: faultPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes faultPulse {
+  0% { stroke-opacity: 0.6; }
+  100% { stroke-opacity: 1.0; }
+}
+
+
